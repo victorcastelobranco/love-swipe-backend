@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model admin {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique(map: "email") @db.VarChar(100)
+  password  String   @db.VarChar(255)
+  timestamp DateTime @default(now()) @db.Timestamp(0)
+}
+
+model matches {
+  id                         Int      @id @default(autoincrement())
+  user1Id                    Int
+  user2Id                    Int
+  timestamp                  DateTime @default(now()) @db.Timestamp(0)
+  user_matches_user1IdTouser user     @relation("matches_user1IdTouser", fields: [user1Id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "matches_ibfk_1")
+  user_matches_user2IdTouser user     @relation("matches_user2IdTouser", fields: [user2Id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "matches_ibfk_2")
+
+  @@index([user1Id], map: "user1Id")
+  @@index([user2Id], map: "user2Id")
+}
+
+model message {
+  id                            Int      @id @default(autoincrement())
+  senderId                      Int
+  receiverId                    Int
+  content                       String   @db.Text
+  timestamp                     DateTime @default(now()) @db.Timestamp(0)
+  user_message_senderIdTouser   user     @relation("message_senderIdTouser", fields: [senderId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "message_ibfk_1")
+  user_message_receiverIdTouser user     @relation("message_receiverIdTouser", fields: [receiverId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "message_ibfk_2")
+
+  @@index([receiverId], map: "receiverId")
+  @@index([senderId], map: "senderId")
+}
+
+model user {
+  id                               Int       @id @default(autoincrement())
+  username                         String    @unique(map: "username") @db.VarChar(100)
+  email                            String    @unique(map: "email") @db.VarChar(100)
+  password                         String    @db.VarChar(255)
+  bio                              String?   @db.Text
+  age                              Int?
+  location                         String?   @db.VarChar(100)
+  interests                        String?   @db.VarChar(255)
+  profilePicture                   String?   @db.Text
+  verified                         Boolean?  @default(false)
+  isPremium                        Boolean?  @default(false)
+  gender                           String?   @db.VarChar(10)
+  matches_matches_user1IdTouser    matches[] @relation("matches_user1IdTouser")
+  matches_matches_user2IdTouser    matches[] @relation("matches_user2IdTouser")
+  message_message_senderIdTouser   message[] @relation("message_senderIdTouser")
+  message_message_receiverIdTouser message[] @relation("message_receiverIdTouser")
+}
