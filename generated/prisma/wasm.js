@@ -145,13 +145,13 @@ exports.Prisma.UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   bio: 'bio',
-  age: 'age',
+  birth: 'birth',
+  gender: 'gender',
   location: 'location',
   interests: 'interests',
   profilePicture: 'profilePicture',
   verified: 'verified',
-  isPremium: 'isPremium',
-  gender: 'gender'
+  isPremium: 'isPremium'
 };
 
 exports.Prisma.SortOrder = {
@@ -178,10 +178,10 @@ exports.Prisma.userOrderByRelevanceFieldEnum = {
   email: 'email',
   password: 'password',
   bio: 'bio',
+  gender: 'gender',
   location: 'location',
   interests: 'interests',
-  profilePicture: 'profilePicture',
-  gender: 'gender'
+  profilePicture: 'profilePicture'
 };
 
 

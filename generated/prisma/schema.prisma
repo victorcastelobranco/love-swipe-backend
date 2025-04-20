@@ -46,13 +46,13 @@ model user {
   email                            String    @unique(map: "email") @db.VarChar(100)
   password                         String    @db.VarChar(255)
   bio                              String?   @db.Text
-  age                              Int?
+  birth                            DateTime? @db.Date
+  gender                           String?   @db.VarChar(10)
   location                         String?   @db.VarChar(100)
-  interests                        String?   @db.LongText
+  interests                        String?   @db.VarChar(255)
   profilePicture                   String?   @db.Text
   verified                         Boolean?  @default(false)
   isPremium                        Boolean?  @default(false)
-  gender                           String?   @db.VarChar(10)
   matches_matches_user1IdTouser    matches[] @relation("matches_user1IdTouser")
   matches_matches_user2IdTouser    matches[] @relation("matches_user2IdTouser")
   message_message_senderIdTouser   message[] @relation("message_senderIdTouser")

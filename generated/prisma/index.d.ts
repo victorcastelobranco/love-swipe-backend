@@ -4025,12 +4025,10 @@ export namespace Prisma {
 
   export type UserAvgAggregateOutputType = {
     id: number | null
-    age: number | null
   }
 
   export type UserSumAggregateOutputType = {
     id: number | null
-    age: number | null
   }
 
   export type UserMinAggregateOutputType = {
@@ -4039,13 +4037,13 @@ export namespace Prisma {
     email: string | null
     password: string | null
     bio: string | null
-    age: number | null
+    birth: Date | null
+    gender: string | null
     location: string | null
     interests: string | null
     profilePicture: string | null
     verified: boolean | null
     isPremium: boolean | null
-    gender: string | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -4054,13 +4052,13 @@ export namespace Prisma {
     email: string | null
     password: string | null
     bio: string | null
-    age: number | null
+    birth: Date | null
+    gender: string | null
     location: string | null
     interests: string | null
     profilePicture: string | null
     verified: boolean | null
     isPremium: boolean | null
-    gender: string | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -4069,25 +4067,23 @@ export namespace Prisma {
     email: number
     password: number
     bio: number
-    age: number
+    birth: number
+    gender: number
     location: number
     interests: number
     profilePicture: number
     verified: number
     isPremium: number
-    gender: number
     _all: number
   }
 
 
   export type UserAvgAggregateInputType = {
     id?: true
-    age?: true
   }
 
   export type UserSumAggregateInputType = {
     id?: true
-    age?: true
   }
 
   export type UserMinAggregateInputType = {
@@ -4096,13 +4092,13 @@ export namespace Prisma {
     email?: true
     password?: true
     bio?: true
-    age?: true
+    birth?: true
+    gender?: true
     location?: true
     interests?: true
     profilePicture?: true
     verified?: true
     isPremium?: true
-    gender?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -4111,13 +4107,13 @@ export namespace Prisma {
     email?: true
     password?: true
     bio?: true
-    age?: true
+    birth?: true
+    gender?: true
     location?: true
     interests?: true
     profilePicture?: true
     verified?: true
     isPremium?: true
-    gender?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -4126,13 +4122,13 @@ export namespace Prisma {
     email?: true
     password?: true
     bio?: true
-    age?: true
+    birth?: true
+    gender?: true
     location?: true
     interests?: true
     profilePicture?: true
     verified?: true
     isPremium?: true
-    gender?: true
     _all?: true
   }
 
@@ -4228,13 +4224,13 @@ export namespace Prisma {
     email: string
     password: string
     bio: string | null
-    age: number | null
+    birth: Date | null
+    gender: string | null
     location: string | null
     interests: string | null
     profilePicture: string | null
     verified: boolean | null
     isPremium: boolean | null
-    gender: string | null
     _count: UserCountAggregateOutputType | null
     _avg: UserAvgAggregateOutputType | null
     _sum: UserSumAggregateOutputType | null
@@ -4262,13 +4258,13 @@ export namespace Prisma {
     email?: boolean
     password?: boolean
     bio?: boolean
-    age?: boolean
+    birth?: boolean
+    gender?: boolean
     location?: boolean
     interests?: boolean
     profilePicture?: boolean
     verified?: boolean
     isPremium?: boolean
-    gender?: boolean
     matches_matches_user1IdTouser?: boolean | user$matches_matches_user1IdTouserArgs<ExtArgs>
     matches_matches_user2IdTouser?: boolean | user$matches_matches_user2IdTouserArgs<ExtArgs>
     message_message_senderIdTouser?: boolean | user$message_message_senderIdTouserArgs<ExtArgs>
@@ -4284,16 +4280,16 @@ export namespace Prisma {
     email?: boolean
     password?: boolean
     bio?: boolean
-    age?: boolean
+    birth?: boolean
+    gender?: boolean
     location?: boolean
     interests?: boolean
     profilePicture?: boolean
     verified?: boolean
     isPremium?: boolean
-    gender?: boolean
   }
 
-  export type userOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "password" | "bio" | "age" | "location" | "interests" | "profilePicture" | "verified" | "isPremium" | "gender", ExtArgs["result"]["user"]>
+  export type userOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "password" | "bio" | "birth" | "gender" | "location" | "interests" | "profilePicture" | "verified" | "isPremium", ExtArgs["result"]["user"]>
   export type userInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     matches_matches_user1IdTouser?: boolean | user$matches_matches_user1IdTouserArgs<ExtArgs>
     matches_matches_user2IdTouser?: boolean | user$matches_matches_user2IdTouserArgs<ExtArgs>
@@ -4316,13 +4312,13 @@ export namespace Prisma {
       email: string
       password: string
       bio: string | null
-      age: number | null
+      birth: Date | null
+      gender: string | null
       location: string | null
       interests: string | null
       profilePicture: string | null
       verified: boolean | null
       isPremium: boolean | null
-      gender: string | null
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -4701,13 +4697,13 @@ export namespace Prisma {
     readonly email: FieldRef<"user", 'String'>
     readonly password: FieldRef<"user", 'String'>
     readonly bio: FieldRef<"user", 'String'>
-    readonly age: FieldRef<"user", 'Int'>
+    readonly birth: FieldRef<"user", 'DateTime'>
+    readonly gender: FieldRef<"user", 'String'>
     readonly location: FieldRef<"user", 'String'>
     readonly interests: FieldRef<"user", 'String'>
     readonly profilePicture: FieldRef<"user", 'String'>
     readonly verified: FieldRef<"user", 'Boolean'>
     readonly isPremium: FieldRef<"user", 'Boolean'>
-    readonly gender: FieldRef<"user", 'String'>
   }
     
 
@@ -5216,13 +5212,13 @@ export namespace Prisma {
     email: 'email',
     password: 'password',
     bio: 'bio',
-    age: 'age',
+    birth: 'birth',
+    gender: 'gender',
     location: 'location',
     interests: 'interests',
     profilePicture: 'profilePicture',
     verified: 'verified',
-    isPremium: 'isPremium',
-    gender: 'gender'
+    isPremium: 'isPremium'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -5264,10 +5260,10 @@ export namespace Prisma {
     email: 'email',
     password: 'password',
     bio: 'bio',
+    gender: 'gender',
     location: 'location',
     interests: 'interests',
-    profilePicture: 'profilePicture',
-    gender: 'gender'
+    profilePicture: 'profilePicture'
   };
 
   export type userOrderByRelevanceFieldEnum = (typeof userOrderByRelevanceFieldEnum)[keyof typeof userOrderByRelevanceFieldEnum]
@@ -5491,13 +5487,13 @@ export namespace Prisma {
     email?: StringFilter<"user"> | string
     password?: StringFilter<"user"> | string
     bio?: StringNullableFilter<"user"> | string | null
-    age?: IntNullableFilter<"user"> | number | null
+    birth?: DateTimeNullableFilter<"user"> | Date | string | null
+    gender?: StringNullableFilter<"user"> | string | null
     location?: StringNullableFilter<"user"> | string | null
     interests?: StringNullableFilter<"user"> | string | null
     profilePicture?: StringNullableFilter<"user"> | string | null
     verified?: BoolNullableFilter<"user"> | boolean | null
     isPremium?: BoolNullableFilter<"user"> | boolean | null
-    gender?: StringNullableFilter<"user"> | string | null
     matches_matches_user1IdTouser?: MatchesListRelationFilter
     matches_matches_user2IdTouser?: MatchesListRelationFilter
     message_message_senderIdTouser?: MessageListRelationFilter
@@ -5510,13 +5506,13 @@ export namespace Prisma {
     email?: SortOrder
     password?: SortOrder
     bio?: SortOrderInput | SortOrder
-    age?: SortOrderInput | SortOrder
+    birth?: SortOrderInput | SortOrder
+    gender?: SortOrderInput | SortOrder
     location?: SortOrderInput | SortOrder
     interests?: SortOrderInput | SortOrder
     profilePicture?: SortOrderInput | SortOrder
     verified?: SortOrderInput | SortOrder
     isPremium?: SortOrderInput | SortOrder
-    gender?: SortOrderInput | SortOrder
     matches_matches_user1IdTouser?: matchesOrderByRelationAggregateInput
     matches_matches_user2IdTouser?: matchesOrderByRelationAggregateInput
     message_message_senderIdTouser?: messageOrderByRelationAggregateInput
@@ -5533,13 +5529,13 @@ export namespace Prisma {
     NOT?: userWhereInput | userWhereInput[]
     password?: StringFilter<"user"> | string
     bio?: StringNullableFilter<"user"> | string | null
-    age?: IntNullableFilter<"user"> | number | null
+    birth?: DateTimeNullableFilter<"user"> | Date | string | null
+    gender?: StringNullableFilter<"user"> | string | null
     location?: StringNullableFilter<"user"> | string | null
     interests?: StringNullableFilter<"user"> | string | null
     profilePicture?: StringNullableFilter<"user"> | string | null
     verified?: BoolNullableFilter<"user"> | boolean | null
     isPremium?: BoolNullableFilter<"user"> | boolean | null
-    gender?: StringNullableFilter<"user"> | string | null
     matches_matches_user1IdTouser?: MatchesListRelationFilter
     matches_matches_user2IdTouser?: MatchesListRelationFilter
     message_message_senderIdTouser?: MessageListRelationFilter
@@ -5552,13 +5548,13 @@ export namespace Prisma {
     email?: SortOrder
     password?: SortOrder
     bio?: SortOrderInput | SortOrder
-    age?: SortOrderInput | SortOrder
+    birth?: SortOrderInput | SortOrder
+    gender?: SortOrderInput | SortOrder
     location?: SortOrderInput | SortOrder
     interests?: SortOrderInput | SortOrder
     profilePicture?: SortOrderInput | SortOrder
     verified?: SortOrderInput | SortOrder
     isPremium?: SortOrderInput | SortOrder
-    gender?: SortOrderInput | SortOrder
     _count?: userCountOrderByAggregateInput
     _avg?: userAvgOrderByAggregateInput
     _max?: userMaxOrderByAggregateInput
@@ -5575,13 +5571,13 @@ export namespace Prisma {
     email?: StringWithAggregatesFilter<"user"> | string
     password?: StringWithAggregatesFilter<"user"> | string
     bio?: StringNullableWithAggregatesFilter<"user"> | string | null
-    age?: IntNullableWithAggregatesFilter<"user"> | number | null
+    birth?: DateTimeNullableWithAggregatesFilter<"user"> | Date | string | null
+    gender?: StringNullableWithAggregatesFilter<"user"> | string | null
     location?: StringNullableWithAggregatesFilter<"user"> | string | null
     interests?: StringNullableWithAggregatesFilter<"user"> | string | null
     profilePicture?: StringNullableWithAggregatesFilter<"user"> | string | null
     verified?: BoolNullableWithAggregatesFilter<"user"> | boolean | null
     isPremium?: BoolNullableWithAggregatesFilter<"user"> | boolean | null
-    gender?: StringNullableWithAggregatesFilter<"user"> | string | null
   }
 
   export type adminCreateInput = {
@@ -5730,13 +5726,13 @@ export namespace Prisma {
     email: string
     password: string
     bio?: string | null
-    age?: number | null
+    birth?: Date | string | null
+    gender?: string | null
     location?: string | null
     interests?: string | null
     profilePicture?: string | null
     verified?: boolean | null
     isPremium?: boolean | null
-    gender?: string | null
     matches_matches_user1IdTouser?: matchesCreateNestedManyWithoutUser_matches_user1IdTouserInput
     matches_matches_user2IdTouser?: matchesCreateNestedManyWithoutUser_matches_user2IdTouserInput
     message_message_senderIdTouser?: messageCreateNestedManyWithoutUser_message_senderIdTouserInput
@@ -5749,13 +5745,13 @@ export namespace Prisma {
     email: string
     password: string
     bio?: string | null
-    age?: number | null
+    birth?: Date | string | null
+    gender?: string | null
     location?: string | null
     interests?: string | null
     profilePicture?: string | null
     verified?: boolean | null
     isPremium?: boolean | null
-    gender?: string | null
     matches_matches_user1IdTouser?: matchesUncheckedCreateNestedManyWithoutUser_matches_user1IdTouserInput
     matches_matches_user2IdTouser?: matchesUncheckedCreateNestedManyWithoutUser_matches_user2IdTouserInput
     message_message_senderIdTouser?: messageUncheckedCreateNestedManyWithoutUser_message_senderIdTouserInput
@@ -5767,13 +5763,13 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
-    age?: NullableIntFieldUpdateOperationsInput | number | null
+    birth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    gender?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
     interests?: NullableStringFieldUpdateOperationsInput | string | null
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: NullableBoolFieldUpdateOperationsInput | boolean | null
     isPremium?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
     matches_matches_user1IdTouser?: matchesUpdateManyWithoutUser_matches_user1IdTouserNestedInput
     matches_matches_user2IdTouser?: matchesUpdateManyWithoutUser_matches_user2IdTouserNestedInput
     message_message_senderIdTouser?: messageUpdateManyWithoutUser_message_senderIdTouserNestedInput
@@ -5786,13 +5782,13 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
-    age?: NullableIntFieldUpdateOperationsInput | number | null
+    birth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    gender?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
     interests?: NullableStringFieldUpdateOperationsInput | string | null
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: NullableBoolFieldUpdateOperationsInput | boolean | null
     isPremium?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
     matches_matches_user1IdTouser?: matchesUncheckedUpdateManyWithoutUser_matches_user1IdTouserNestedInput
     matches_matches_user2IdTouser?: matchesUncheckedUpdateManyWithoutUser_matches_user2IdTouserNestedInput
     message_message_senderIdTouser?: messageUncheckedUpdateManyWithoutUser_message_senderIdTouserNestedInput
@@ -5805,13 +5801,13 @@ export namespace Prisma {
     email: string
     password: string
     bio?: string | null
-    age?: number | null
+    birth?: Date | string | null
+    gender?: string | null
     location?: string | null
     interests?: string | null
     profilePicture?: string | null
     verified?: boolean | null
     isPremium?: boolean | null
-    gender?: string | null
   }
 
   export type userUpdateManyMutationInput = {
@@ -5819,13 +5815,13 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
-    age?: NullableIntFieldUpdateOperationsInput | number | null
+    birth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    gender?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
     interests?: NullableStringFieldUpdateOperationsInput | string | null
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: NullableBoolFieldUpdateOperationsInput | boolean | null
     isPremium?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type userUncheckedUpdateManyInput = {
@@ -5834,13 +5830,13 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
-    age?: NullableIntFieldUpdateOperationsInput | number | null
+    birth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    gender?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
     interests?: NullableStringFieldUpdateOperationsInput | string | null
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: NullableBoolFieldUpdateOperationsInput | boolean | null
     isPremium?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -6058,15 +6054,15 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | null
+    notIn?: Date[] | string[] | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
   export type BoolNullableFilter<$PrismaModel = never> = {
@@ -6111,18 +6107,17 @@ export namespace Prisma {
     email?: SortOrder
     password?: SortOrder
     bio?: SortOrder
-    age?: SortOrder
+    birth?: SortOrder
+    gender?: SortOrder
     location?: SortOrder
     interests?: SortOrder
     profilePicture?: SortOrder
     verified?: SortOrder
     isPremium?: SortOrder
-    gender?: SortOrder
   }
 
   export type userAvgOrderByAggregateInput = {
     id?: SortOrder
-    age?: SortOrder
   }
 
   export type userMaxOrderByAggregateInput = {
@@ -6131,13 +6126,13 @@ export namespace Prisma {
     email?: SortOrder
     password?: SortOrder
     bio?: SortOrder
-    age?: SortOrder
+    birth?: SortOrder
+    gender?: SortOrder
     location?: SortOrder
     interests?: SortOrder
     profilePicture?: SortOrder
     verified?: SortOrder
     isPremium?: SortOrder
-    gender?: SortOrder
   }
 
   export type userMinOrderByAggregateInput = {
@@ -6146,18 +6141,17 @@ export namespace Prisma {
     email?: SortOrder
     password?: SortOrder
     bio?: SortOrder
-    age?: SortOrder
+    birth?: SortOrder
+    gender?: SortOrder
     location?: SortOrder
     interests?: SortOrder
     profilePicture?: SortOrder
     verified?: SortOrder
     isPremium?: SortOrder
-    gender?: SortOrder
   }
 
   export type userSumOrderByAggregateInput = {
     id?: SortOrder
-    age?: SortOrder
   }
 
   export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -6178,20 +6172,18 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | null
+    notIn?: Date[] | string[] | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
     _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type BoolNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -6334,12 +6326,8 @@ export namespace Prisma {
     set?: string | null
   }
 
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
   }
 
   export type NullableBoolFieldUpdateOperationsInput = {
@@ -6569,15 +6557,15 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | null
+    notIn?: Date[] | string[] | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
   export type NestedBoolNullableFilter<$PrismaModel = never> = {
@@ -6603,7 +6591,7 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
-  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | null
     notIn?: number[] | null
@@ -6611,23 +6599,21 @@ export namespace Prisma {
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | null
+    notIn?: Date[] | string[] | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type NestedBoolNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -6643,13 +6629,13 @@ export namespace Prisma {
     email: string
     password: string
     bio?: string | null
-    age?: number | null
+    birth?: Date | string | null
+    gender?: string | null
     location?: string | null
     interests?: string | null
     profilePicture?: string | null
     verified?: boolean | null
     isPremium?: boolean | null
-    gender?: string | null
     matches_matches_user2IdTouser?: matchesCreateNestedManyWithoutUser_matches_user2IdTouserInput
     message_message_senderIdTouser?: messageCreateNestedManyWithoutUser_message_senderIdTouserInput
     message_message_receiverIdTouser?: messageCreateNestedManyWithoutUser_message_receiverIdTouserInput
@@ -6661,13 +6647,13 @@ export namespace Prisma {
     email: string
     password: string
     bio?: string | null
-    age?: number | null
+    birth?: Date | string | null
+    gender?: string | null
     location?: string | null
     interests?: string | null
     profilePicture?: string | null
     verified?: boolean | null
     isPremium?: boolean | null
-    gender?: string | null
     matches_matches_user2IdTouser?: matchesUncheckedCreateNestedManyWithoutUser_matches_user2IdTouserInput
     message_message_senderIdTouser?: messageUncheckedCreateNestedManyWithoutUser_message_senderIdTouserInput
     message_message_receiverIdTouser?: messageUncheckedCreateNestedManyWithoutUser_message_receiverIdTouserInput
@@ -6683,13 +6669,13 @@ export namespace Prisma {
     email: string
     password: string
     bio?: string | null
-    age?: number | null
+    birth?: Date | string | null
+    gender?: string | null
     location?: string | null
     interests?: string | null
     profilePicture?: string | null
     verified?: boolean | null
     isPremium?: boolean | null
-    gender?: string | null
     matches_matches_user1IdTouser?: matchesCreateNestedManyWithoutUser_matches_user1IdTouserInput
     message_message_senderIdTouser?: messageCreateNestedManyWithoutUser_message_senderIdTouserInput
     message_message_receiverIdTouser?: messageCreateNestedManyWithoutUser_message_receiverIdTouserInput
@@ -6701,13 +6687,13 @@ export namespace Prisma {
     email: string
     password: string
     bio?: string | null
-    age?: number | null
+    birth?: Date | string | null
+    gender?: string | null
     location?: string | null
     interests?: string | null
     profilePicture?: string | null
     verified?: boolean | null
     isPremium?: boolean | null
-    gender?: string | null
     matches_matches_user1IdTouser?: matchesUncheckedCreateNestedManyWithoutUser_matches_user1IdTouserInput
     message_message_senderIdTouser?: messageUncheckedCreateNestedManyWithoutUser_message_senderIdTouserInput
     message_message_receiverIdTouser?: messageUncheckedCreateNestedManyWithoutUser_message_receiverIdTouserInput
@@ -6734,13 +6720,13 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
-    age?: NullableIntFieldUpdateOperationsInput | number | null
+    birth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    gender?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
     interests?: NullableStringFieldUpdateOperationsInput | string | null
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: NullableBoolFieldUpdateOperationsInput | boolean | null
     isPremium?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
     matches_matches_user2IdTouser?: matchesUpdateManyWithoutUser_matches_user2IdTouserNestedInput
     message_message_senderIdTouser?: messageUpdateManyWithoutUser_message_senderIdTouserNestedInput
     message_message_receiverIdTouser?: messageUpdateManyWithoutUser_message_receiverIdTouserNestedInput
@@ -6752,13 +6738,13 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
-    age?: NullableIntFieldUpdateOperationsInput | number | null
+    birth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    gender?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
     interests?: NullableStringFieldUpdateOperationsInput | string | null
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: NullableBoolFieldUpdateOperationsInput | boolean | null
     isPremium?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
     matches_matches_user2IdTouser?: matchesUncheckedUpdateManyWithoutUser_matches_user2IdTouserNestedInput
     message_message_senderIdTouser?: messageUncheckedUpdateManyWithoutUser_message_senderIdTouserNestedInput
     message_message_receiverIdTouser?: messageUncheckedUpdateManyWithoutUser_message_receiverIdTouserNestedInput
@@ -6780,13 +6766,13 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
-    age?: NullableIntFieldUpdateOperationsInput | number | null
+    birth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    gender?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
     interests?: NullableStringFieldUpdateOperationsInput | string | null
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: NullableBoolFieldUpdateOperationsInput | boolean | null
     isPremium?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
     matches_matches_user1IdTouser?: matchesUpdateManyWithoutUser_matches_user1IdTouserNestedInput
     message_message_senderIdTouser?: messageUpdateManyWithoutUser_message_senderIdTouserNestedInput
     message_message_receiverIdTouser?: messageUpdateManyWithoutUser_message_receiverIdTouserNestedInput
@@ -6798,13 +6784,13 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
-    age?: NullableIntFieldUpdateOperationsInput | number | null
+    birth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    gender?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
     interests?: NullableStringFieldUpdateOperationsInput | string | null
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: NullableBoolFieldUpdateOperationsInput | boolean | null
     isPremium?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
     matches_matches_user1IdTouser?: matchesUncheckedUpdateManyWithoutUser_matches_user1IdTouserNestedInput
     message_message_senderIdTouser?: messageUncheckedUpdateManyWithoutUser_message_senderIdTouserNestedInput
     message_message_receiverIdTouser?: messageUncheckedUpdateManyWithoutUser_message_receiverIdTouserNestedInput
@@ -6815,13 +6801,13 @@ export namespace Prisma {
     email: string
     password: string
     bio?: string | null
-    age?: number | null
+    birth?: Date | string | null
+    gender?: string | null
     location?: string | null
     interests?: string | null
     profilePicture?: string | null
     verified?: boolean | null
     isPremium?: boolean | null
-    gender?: string | null
     matches_matches_user1IdTouser?: matchesCreateNestedManyWithoutUser_matches_user1IdTouserInput
     matches_matches_user2IdTouser?: matchesCreateNestedManyWithoutUser_matches_user2IdTouserInput
     message_message_receiverIdTouser?: messageCreateNestedManyWithoutUser_message_receiverIdTouserInput
@@ -6833,13 +6819,13 @@ export namespace Prisma {
     email: string
     password: string
     bio?: string | null
-    age?: number | null
+    birth?: Date | string | null
+    gender?: string | null
     location?: string | null
     interests?: string | null
     profilePicture?: string | null
     verified?: boolean | null
     isPremium?: boolean | null
-    gender?: string | null
     matches_matches_user1IdTouser?: matchesUncheckedCreateNestedManyWithoutUser_matches_user1IdTouserInput
     matches_matches_user2IdTouser?: matchesUncheckedCreateNestedManyWithoutUser_matches_user2IdTouserInput
     message_message_receiverIdTouser?: messageUncheckedCreateNestedManyWithoutUser_message_receiverIdTouserInput
@@ -6855,13 +6841,13 @@ export namespace Prisma {
     email: string
     password: string
     bio?: string | null
-    age?: number | null
+    birth?: Date | string | null
+    gender?: string | null
     location?: string | null
     interests?: string | null
     profilePicture?: string | null
     verified?: boolean | null
     isPremium?: boolean | null
-    gender?: string | null
     matches_matches_user1IdTouser?: matchesCreateNestedManyWithoutUser_matches_user1IdTouserInput
     matches_matches_user2IdTouser?: matchesCreateNestedManyWithoutUser_matches_user2IdTouserInput
     message_message_senderIdTouser?: messageCreateNestedManyWithoutUser_message_senderIdTouserInput
@@ -6873,13 +6859,13 @@ export namespace Prisma {
     email: string
     password: string
     bio?: string | null
-    age?: number | null
+    birth?: Date | string | null
+    gender?: string | null
     location?: string | null
     interests?: string | null
     profilePicture?: string | null
     verified?: boolean | null
     isPremium?: boolean | null
-    gender?: string | null
     matches_matches_user1IdTouser?: matchesUncheckedCreateNestedManyWithoutUser_matches_user1IdTouserInput
     matches_matches_user2IdTouser?: matchesUncheckedCreateNestedManyWithoutUser_matches_user2IdTouserInput
     message_message_senderIdTouser?: messageUncheckedCreateNestedManyWithoutUser_message_senderIdTouserInput
@@ -6906,13 +6892,13 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
-    age?: NullableIntFieldUpdateOperationsInput | number | null
+    birth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    gender?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
     interests?: NullableStringFieldUpdateOperationsInput | string | null
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: NullableBoolFieldUpdateOperationsInput | boolean | null
     isPremium?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
     matches_matches_user1IdTouser?: matchesUpdateManyWithoutUser_matches_user1IdTouserNestedInput
     matches_matches_user2IdTouser?: matchesUpdateManyWithoutUser_matches_user2IdTouserNestedInput
     message_message_receiverIdTouser?: messageUpdateManyWithoutUser_message_receiverIdTouserNestedInput
@@ -6924,13 +6910,13 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
-    age?: NullableIntFieldUpdateOperationsInput | number | null
+    birth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    gender?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
     interests?: NullableStringFieldUpdateOperationsInput | string | null
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: NullableBoolFieldUpdateOperationsInput | boolean | null
     isPremium?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
     matches_matches_user1IdTouser?: matchesUncheckedUpdateManyWithoutUser_matches_user1IdTouserNestedInput
     matches_matches_user2IdTouser?: matchesUncheckedUpdateManyWithoutUser_matches_user2IdTouserNestedInput
     message_message_receiverIdTouser?: messageUncheckedUpdateManyWithoutUser_message_receiverIdTouserNestedInput
@@ -6952,13 +6938,13 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
-    age?: NullableIntFieldUpdateOperationsInput | number | null
+    birth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    gender?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
     interests?: NullableStringFieldUpdateOperationsInput | string | null
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: NullableBoolFieldUpdateOperationsInput | boolean | null
     isPremium?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
     matches_matches_user1IdTouser?: matchesUpdateManyWithoutUser_matches_user1IdTouserNestedInput
     matches_matches_user2IdTouser?: matchesUpdateManyWithoutUser_matches_user2IdTouserNestedInput
     message_message_senderIdTouser?: messageUpdateManyWithoutUser_message_senderIdTouserNestedInput
@@ -6970,13 +6956,13 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
-    age?: NullableIntFieldUpdateOperationsInput | number | null
+    birth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    gender?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
     interests?: NullableStringFieldUpdateOperationsInput | string | null
     profilePicture?: NullableStringFieldUpdateOperationsInput | string | null
     verified?: NullableBoolFieldUpdateOperationsInput | boolean | null
     isPremium?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
     matches_matches_user1IdTouser?: matchesUncheckedUpdateManyWithoutUser_matches_user1IdTouserNestedInput
     matches_matches_user2IdTouser?: matchesUncheckedUpdateManyWithoutUser_matches_user2IdTouserNestedInput
     message_message_senderIdTouser?: messageUncheckedUpdateManyWithoutUser_message_senderIdTouserNestedInput
