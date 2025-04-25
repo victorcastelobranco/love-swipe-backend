@@ -18,6 +18,7 @@ model matches {
   id                         Int      @id @default(autoincrement())
   user1Id                    Int
   user2Id                    Int
+  isMutual                   Boolean? @default(false)
   timestamp                  DateTime @default(now()) @db.Timestamp(0)
   user_matches_user1IdTouser user     @relation("matches_user1IdTouser", fields: [user1Id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "matches_ibfk_1")
   user_matches_user2IdTouser user     @relation("matches_user2IdTouser", fields: [user2Id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "matches_ibfk_2")

@@ -7,6 +7,8 @@ const cors = require('cors'); // <-- You need this!
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const matchesRouter = require('./routes/matches');
+
 
 const app = express();
 
@@ -25,7 +27,8 @@ app.use(cors()); // <-- Needed for frontend requests like Vue
 // 🔽 This is where you wire your routes 🔽
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter); // <-- ✅ This is what activates /api/users/signup
-
+app.use('/api/matches', matchesRouter);
+console.log("✅ matchesRouter mounted");
 
 
 app.post('/api/users/signup', (req, res) => {
