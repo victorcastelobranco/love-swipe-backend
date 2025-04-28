@@ -3,16 +3,17 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const cors = require('cors'); // <-- You need this!
+const cors = require('cors');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const matchesRouter = require('./routes/matches');
-
+const messagesRouter = require('./routes/messages');
+const adminRouter = require('./routes/admin'); // <-- your admin routes
 
 const app = express();
 
-// view engine setup
+// view engine setup (optional if you're not rendering views)
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
@@ -21,21 +22,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors()); // allow frontend (like Vue) to talk to backend
 
-app.use(cors()); // <-- Needed for frontend requests like Vue
-
-// 🔽 This is where you wire your routes 🔽
+// 🔥 Mount your routers
 app.use('/', indexRouter);
-app.use('/api/users', usersRouter); // <-- ✅ This is what activates /api/users/signup
+app.use('/api/users', usersRouter);
 app.use('/api/matches', matchesRouter);
-console.log("✅ matchesRouter mounted");
+app.use('/api/messages', messagesRouter);
+console.log('DEBUG: adminRouter =', adminRouter);
+app.use('/api/admin', adminRouter);
 
-
-app.post('/api/users/signup', (req, res) => {
-  console.log('🔥 /api/users/signup reached');
-  res.send('🔥 It works!');
-});
-
+console.log("✅ All routers mounted successfully");
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -44,11 +41,9 @@ app.use(function(req, res, next) {
 
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
   res.status(err.status || 500);
   res.render('error');
 });

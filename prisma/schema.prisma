@@ -9,7 +9,7 @@ datasource db {
 
 model admin {
   id        Int      @id @default(autoincrement())
-  email     String   @unique(map: "email") @db.VarChar(100)
+  email     String   @unique(map: "admin_email") @db.VarChar(100)
   password  String   @db.VarChar(255)
   timestamp DateTime @default(now()) @db.Timestamp(0)
 }
@@ -32,7 +32,7 @@ model message {
   senderId                      Int
   receiverId                    Int
   content                       String   @db.Text
-  timestamp                     DateTime @default(now()) @db.Timestamp(0)
+  createdAt                     DateTime @default(now()) @db.DateTime(0)
   user_message_senderIdTouser   user     @relation("message_senderIdTouser", fields: [senderId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "message_ibfk_1")
   user_message_receiverIdTouser user     @relation("message_receiverIdTouser", fields: [receiverId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "message_ibfk_2")
 
@@ -42,8 +42,8 @@ model message {
 
 model user {
   id                               Int       @id @default(autoincrement())
-  username                         String    @unique(map: "username") @db.VarChar(100)
-  email                            String    @unique(map: "email") @db.VarChar(100)
+  username                         String    @unique(map: "user_username") @db.VarChar(100)
+  email                            String    @unique(map: "user_email") @db.VarChar(100)
   password                         String    @db.VarChar(255)
   bio                              String?   @db.Text
   birth                            DateTime? @db.Date
