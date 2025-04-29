@@ -1,15 +1,13 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-
-//post matches
+// POST /api/matches → Like another user
 exports.matchUser = async (req, res) => {
   const { likedUserId } = req.body;
   const currentUserId = req.user.id;
 
   console.log("✅ matchUser endpoint hit");
-  console.log("➡️  Liking userId:", req.user.id, "→", req.body.likedUserId);
-
+  console.log("➡️ Liking userId:", currentUserId, "→", likedUserId);
 
   if (!likedUserId) {
     return res.status(400).json({ error: "Missing likedUserId" });
@@ -58,14 +56,11 @@ exports.matchUser = async (req, res) => {
   }
 };
 
-
-//get matches
+// GET /api/matches → Fetch mutual matches
 exports.getMatches = async (req, res) => {
   const currentUserId = req.user.id;
 
   try {
-    console.log("🔍 Fetching matches for user:", currentUserId);
-
     const matches = await prisma.matches.findMany({
       where: {
         isMutual: true,
@@ -75,43 +70,14 @@ exports.getMatches = async (req, res) => {
         ]
       },
       include: {
-        user_matches_user1IdTouser: {
-          select: {
-            id: true,
-            username: true,
-            email: true,
-            profilePicture: true
-          }
-        },
-        user_matches_user2IdTouser: {
-          select: {
-            id: true,
-            username: true,
-            email: true,
-            profilePicture: true
-          }
-        }
+        user_matches_user1IdTouser: true,
+        user_matches_user2IdTouser: true
       }
     });
 
-    const matchedUsers = [];
-    const seenUserIds = new Set();
-    
-    matches.forEach(match => {
-      const isUser1 = match.user1Id === currentUserId;
-      const matchedUser = isUser1
-        ? match.user_matches_user2IdTouser
-        : match.user_matches_user1IdTouser;
-    
-      if (!seenUserIds.has(matchedUser.id)) {
-        seenUserIds.add(matchedUser.id);
-        matchedUsers.push(matchedUser);
-      }
-    });
-
-    res.status(200).json({ matches: matchedUsers });
+    res.status(200).json({ matches });
   } catch (err) {
     console.error("❌ Error fetching matches:", err);
-    res.status(500).json({ error: 'Failed to fetch matches' });
+    res.status(500).json({ error: "Failed to fetch matches" });
   }
 };

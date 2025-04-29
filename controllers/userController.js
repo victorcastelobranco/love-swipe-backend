@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 //SIGNING UP
 exports.signup = async (req, res) => {
   try {
-    const { email, username, password, birth, gender } = req.body;
+    const { email, username, password, birth, gender, profilePicture } = req.body;
 
     if (!email || !username || !password || !birth || !gender) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -25,7 +25,8 @@ exports.signup = async (req, res) => {
         birth: new Date(birth),
         gender,
         verified: false,
-        isPremium: false
+        isPremium: false,
+        profilePicture  // ✅ add this
       }
     });
 
@@ -113,7 +114,8 @@ exports.getMe = async (req, res) => {
         birth: true,
         gender: true,
         isPremium: true,
-        verified: true
+        verified: true,
+        profilePicture: true  // ✅ add this!
       }
     });
 
@@ -157,5 +159,68 @@ exports.updateProfile = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to update profile' });
+  }
+};
+
+// ✅ New: Get a random user you haven't liked yet
+exports.getRandomUser = async (req, res) => {
+  const currentUserId = req.user.id;
+
+  try {
+    // Find IDs of users you already liked
+    const likedUsers = await prisma.matches.findMany({
+      where: { user1Id: currentUserId },
+      select: { user2Id: true }
+    });
+
+    const likedIds = likedUsers.map(like => like.user2Id);
+
+    // Find a random user you haven't liked and not yourself
+    const randomUser = await prisma.user.findFirst({
+      where: {
+        id: {
+          notIn: [currentUserId, ...likedIds]
+        }
+      },
+      orderBy: {
+        // MySQL doesn't support true random order easily, we can randomize on frontend if needed
+        id: 'asc'
+      }
+    });
+
+    if (!randomUser) {
+      return res.status(404).json({ message: 'No more users to swipe!' });
+    }
+
+    res.status(200).json({ user: randomUser });
+  } catch (err) {
+    console.error('❌ Error fetching random user:', err);
+    res.status(500).json({ error: 'Failed to fetch random user' });
+  }
+};
+
+// ➡️ Fetch another user's public profile
+exports.getUserById = async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: parseInt(req.params.id) },
+      select: {
+        id: true,
+        username: true,
+        profilePicture: true, // ✅ ADD THIS LINE
+        birth: true,
+        bio: true,
+        interests: true
+      }
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json(user);
+  } catch (err) {
+    console.error('❌ Error fetching user by ID:', err);
+    res.status(500).json({ error: "Failed to fetch user" });
   }
 };
