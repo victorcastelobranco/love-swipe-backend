@@ -21,4 +21,6 @@ router.get('/random', auth(), userController.getRandomUser);
 // Get another user's public profile
 router.get('/:id', auth(), userController.getUserById);
 
+router.put('/preferences', auth(), userController.updatePreferences);
+
 module.exports = router;

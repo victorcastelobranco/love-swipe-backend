@@ -95,7 +95,7 @@ exports.login = async (req, res) => {
       { expiresIn: process.env.JWT_EXPIRES_IN }
     );
 
-    res.status(200).json({ message: "User login successful", token });
+    res.status(200).json({ message: "User login successful", token, user });
 
   } catch (err) {
     console.error('❌ Login error:', err);
@@ -162,37 +162,41 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-// ✅ New: Get a random user you haven't liked yet
 exports.getRandomUser = async (req, res) => {
   const currentUserId = req.user.id;
 
   try {
-    // Find IDs of users you already liked
-    const likedUsers = await prisma.matches.findMany({
-      where: { user1Id: currentUserId },
+    // ✅ Only exclude users that *I* (currentUser) have already interacted with
+    const interactions = await prisma.matches.findMany({
+      where: {
+        user1Id: currentUserId
+      },
       select: { user2Id: true }
     });
 
-    const likedIds = likedUsers.map(like => like.user2Id);
+    // 🧹 Flatten excluded IDs
+    const excludedIds = interactions.map(m => m.user2Id);
+    excludedIds.push(currentUserId); // Don't match with yourself
 
-    // Find a random user you haven't liked and not yourself
-    const randomUser = await prisma.user.findFirst({
+    // ✅ Fetch a random user I haven't interacted with yet
+    const user = await prisma.user.findFirst({
       where: {
         id: {
-          notIn: [currentUserId, ...likedIds]
+          notIn: excludedIds
+        },
+        profilePicture: {
+          not: null
         }
       },
-      orderBy: {
-        // MySQL doesn't support true random order easily, we can randomize on frontend if needed
-        id: 'asc'
-      }
+      orderBy: { id: 'asc' } // You can change to random later if desired
     });
 
-    if (!randomUser) {
-      return res.status(404).json({ message: 'No more users to swipe!' });
+    if (!user) {
+      return res.status(200).json({ user: null });
     }
 
-    res.status(200).json({ user: randomUser });
+    res.json({ user });
+
   } catch (err) {
     console.error('❌ Error fetching random user:', err);
     res.status(500).json({ error: 'Failed to fetch random user' });
@@ -207,7 +211,7 @@ exports.getUserById = async (req, res) => {
       select: {
         id: true,
         username: true,
-        profilePicture: true, // ✅ ADD THIS LINE
+        profilePicture: true,
         birth: true,
         bio: true,
         interests: true
@@ -218,9 +222,42 @@ exports.getUserById = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
+    // 🔴 Likely you have:
+    // res.json({ user });
+
+    // ✅ Fix it to:
     res.json(user);
   } catch (err) {
     console.error('❌ Error fetching user by ID:', err);
     res.status(500).json({ error: "Failed to fetch user" });
+  }
+};
+
+// ➡️ Save or update user preferences
+exports.updatePreferences = async (req, res) => {
+  const { preferredGender, preferredLocation, minAge, maxAge } = req.body;
+
+  try {
+    const preferences = await prisma.userpreferences.upsert({   // <-- lowercase here!
+      where: { userId: req.user.id },
+      update: {
+        preferredGender,
+        preferredLocation,
+        minAge: minAge ? parseInt(minAge) : null,
+        maxAge: maxAge ? parseInt(maxAge) : null
+      },
+      create: {
+        userId: req.user.id,
+        preferredGender,
+        preferredLocation,
+        minAge: minAge ? parseInt(minAge) : null,
+        maxAge: maxAge ? parseInt(maxAge) : null
+      }
+    });
+
+    res.status(200).json({ message: "Preferences saved!", preferences });
+  } catch (err) {
+    console.error("❌ Error saving preferences:", err);
+    res.status(500).json({ error: "Failed to save preferences" });
   }
 };
