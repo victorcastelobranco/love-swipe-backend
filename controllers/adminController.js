@@ -32,7 +32,9 @@ exports.register = async (req, res) => {
 exports.dashboard = async (req, res) => {
   try {
     const totalUsers = await prisma.user.count();
-    const totalMatches = await prisma.matches.count();
+    const totalMatches = await prisma.matches.count({
+      where: { isMutual: true } // ✅ only count mutual matches
+    });
     const totalMessages = await prisma.message.count();
 
     res.status(200).json({
