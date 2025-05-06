@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const jwt = require('jsonwebtoken');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 // Step 1: Redirect to Google login
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
@@ -8,16 +11,31 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
 // Step 2: Handle Google callback
 router.get('/google/callback',
   passport.authenticate('google', {
-    failureRedirect: '/login', // front-end route
+    failureRedirect: '/login',
     session: false
   }),
-  (req, res) => {
-    const token = req.user ? generateJWT(req.user) : null;
-    res.redirect(`http://localhost:8080/oauth-success?token=${token}`);
+  async (req, res) => {
+    const user = req.user;
+
+    if (!user) {
+      return res.redirect('http://localhost:5173/login?error=oauth_failed');
+    }
+
+    const token = generateJWT(user);
+
+    // Check if profile is complete (birth and gender exist)
+    const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
+    const isProfileComplete = dbUser.birth && dbUser.gender;
+
+    const redirectUrl = isProfileComplete
+      ? 'http://localhost:5173/home'
+      : 'http://localhost:5173/complete-profile';
+
+    res.redirect(`${redirectUrl}?token=${token}&userId=${user.id}`);
   }
 );
 
-const jwt = require('jsonwebtoken');
+// 🔐 Helper to generate JWT
 function generateJWT(user) {
   return jwt.sign(
     { id: user.id, email: user.email, role: 'user' },
