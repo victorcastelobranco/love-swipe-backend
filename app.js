@@ -5,6 +5,12 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
 
+const session = require('express-session');
+const passport = require('passport');
+require('./config/passport');
+
+
+
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const matchesRouter = require('./routes/matches');
@@ -31,6 +37,17 @@ app.use('/api/matches', matchesRouter);
 app.use('/api/messages', messagesRouter);
 console.log('DEBUG: adminRouter =', adminRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/auth', require('./routes/oauth'));
+
+//google oauth part
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 console.log("✅ All routers mounted successfully");
 
