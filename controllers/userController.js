@@ -109,13 +109,15 @@ exports.getMe = async (req, res) => {
       where: { id: req.user.id },
       select: {
         id: true,
-        email: true,
         username: true,
-        birth: true,
+        email: true,
         gender: true,
+        birth: true,
+        profilePicture: true,
         isPremium: true,
-        verified: true,
-        profilePicture: true  // ✅ add this!
+        bio: true,
+        interests: true,
+        location: true
       }
     });
 
@@ -131,34 +133,37 @@ exports.getMe = async (req, res) => {
 };
   
 exports.updateProfile = async (req, res) => {
-  const { bio, location, interests, profilePicture, gender } = req.body;
+  const userId = req.user.id;
+  const updates = req.body;
 
   try {
+    // Fetch current user
+    const currentUser = await prisma.user.findUnique({ where: { id: userId } });
+
+    if (!currentUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Only update fields that are provided (not null/undefined/empty string)
+    const dataToUpdate = {
+      username: updates.username?.trim() || currentUser.username,
+      profilePicture: updates.profilePicture?.trim() || currentUser.profilePicture,
+      birth: updates.birth || currentUser.birth,
+      gender: updates.gender || currentUser.gender,
+      bio: updates.bio?.trim() || currentUser.bio,
+      interests: updates.interests?.trim() || currentUser.interests,
+      location: updates.location?.trim() || currentUser.location
+    };
+
     const updatedUser = await prisma.user.update({
-      where: { id: req.user.id },
-      data: {
-        bio,
-        location,
-        interests,
-        profilePicture,
-        gender
-      },
-      select: {
-        id: true,
-        email: true,
-        username: true,
-        bio: true,
-        location: true,
-        interests: true,
-        profilePicture: true,
-        gender: true
-      }
+      where: { id: userId },
+      data: dataToUpdate
     });
 
     res.status(200).json({ message: 'Profile updated', user: updatedUser });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to update profile' });
+    console.error("❌ Failed to update profile:", err);
+    res.status(500).json({ error: "Update failed" });
   }
 };
 
@@ -200,7 +205,8 @@ exports.getUserById = async (req, res) => {
         profilePicture: true,
         birth: true,
         bio: true,
-        interests: true
+        interests: true,
+        location: true // ✅ Add this line
       }
     });
 
@@ -208,10 +214,6 @@ exports.getUserById = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // 🔴 Likely you have:
-    // res.json({ user });
-
-    // ✅ Fix it to:
     res.json(user);
   } catch (err) {
     console.error('❌ Error fetching user by ID:', err);

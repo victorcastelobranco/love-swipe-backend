@@ -25,13 +25,19 @@ router.get('/google/callback',
 
     // Check if profile is complete (birth and gender exist)
     const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
-    const isProfileComplete = dbUser.birth && dbUser.gender;
+    const isProfileComplete =
+    dbUser.birth &&
+    dbUser.gender &&
+    dbUser.bio &&
+    dbUser.location &&
+    dbUser.interests &&
+    dbUser.profilePicture;
 
     const redirectUrl = isProfileComplete
       ? 'http://localhost:8080/home'
       : 'http://localhost:8080/complete-profile';
 
-    res.redirect(`${redirectUrl}?token=${token}&userId=${user.id}`);
+      res.redirect(`http://localhost:8080/oauth-success?token=${token}&userId=${user.id}`);
   }
 );
 
