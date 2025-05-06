@@ -18,7 +18,7 @@ router.get('/google/callback',
     const user = req.user;
 
     if (!user) {
-      return res.redirect('http://localhost:5173/login?error=oauth_failed');
+      return res.redirect('http://localhost:8080/login?error=oauth_failed');
     }
 
     const token = generateJWT(user);
@@ -28,8 +28,8 @@ router.get('/google/callback',
     const isProfileComplete = dbUser.birth && dbUser.gender;
 
     const redirectUrl = isProfileComplete
-      ? 'http://localhost:5173/home'
-      : 'http://localhost:5173/complete-profile';
+      ? 'http://localhost:8080/home'
+      : 'http://localhost:8080/complete-profile';
 
     res.redirect(`${redirectUrl}?token=${token}&userId=${user.id}`);
   }
