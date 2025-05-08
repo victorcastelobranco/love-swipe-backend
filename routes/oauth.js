@@ -30,14 +30,13 @@ router.get('/google/callback',
     dbUser.gender &&
     dbUser.bio &&
     dbUser.location &&
-    dbUser.interests &&
-    dbUser.profilePicture;
+    dbUser.interests;
 
     const redirectUrl = isProfileComplete
       ? 'http://localhost:8080/home'
       : 'http://localhost:8080/complete-profile';
 
-      res.redirect(`http://localhost:8080/oauth-success?token=${token}&userId=${user.id}`);
+      res.redirect(`${redirectUrl}?token=${token}&userId=${user.id}`);
   }
 );
 
