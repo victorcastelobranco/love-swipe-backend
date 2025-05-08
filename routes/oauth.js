@@ -36,7 +36,8 @@ router.get('/google/callback',
       ? 'http://localhost:8080/home'
       : 'http://localhost:8080/complete-profile';
 
-      res.redirect(`${redirectUrl}?token=${token}&userId=${user.id}`);
+      const finalRedirect = `http://localhost:8080/oauth-success?token=${token}&userId=${user.id}&profileComplete=${isProfileComplete}`;
+      res.redirect(finalRedirect);
   }
 );
 
