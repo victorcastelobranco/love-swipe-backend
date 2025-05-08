@@ -16,6 +16,8 @@ const usersRouter = require('./routes/users');
 const matchesRouter = require('./routes/matches');
 const messagesRouter = require('./routes/messages');
 const adminRouter = require('./routes/admin'); // <-- your admin routes
+const verifyRoutes = require('./routes/verify');
+
 
 const app = express();
 
@@ -38,6 +40,7 @@ app.use('/api/messages', messagesRouter);
 console.log('DEBUG: adminRouter =', adminRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/auth', require('./routes/oauth'));
+app.use('/api', verifyRoutes);
 
 //google oauth part
 app.use(session({

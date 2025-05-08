@@ -1,6 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
+
 // ➡️ Send a message
 exports.sendMessage = async (req, res) => {
   const { receiverId, content } = req.body;

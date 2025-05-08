@@ -6,18 +6,25 @@ const isValidEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
+const { v4: uuidv4 } = require('uuid');
+const nodemailer = require('nodemailer');
 
 //SIGNING UP
 exports.signup = async (req, res) => {
   try {
     const { email, username, password, birth, gender, profilePicture } = req.body;
-
+    //all fields must be filled
     if (!email || !username || !password || !birth || !gender) {
       return res.status(400).json({ error: "Missing required fields" });
     }
-
+    //check regex for valid email
     if (!isValidEmail(email)) {
       return res.status(400).json({ error: 'Invalid email format' });
+    }
+    //check same email or not
+    const existing = await prisma.user.findUnique({ where: { email } });
+    if (existing) {
+      return res.status(400).json({ error: 'Email already registered' });
     }
 
     // hashing the password
@@ -37,11 +44,37 @@ exports.signup = async (req, res) => {
         profilePicture  // ✅ add this
       }
     });
+       // 📧 Send verification email
+      const transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS
+        }
+      });
 
-    res.status(201).json({ message: "User created", user });
+      const token = uuidv4(); // ✅ generate the token
+      const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+      
+      await prisma.verificationToken.create({
+        data: {
+          token,
+          userId: user.id,
+          expiresAt
+        }
+      });
+
+    await transporter.sendMail({
+      from: '"Love Swipe" <no-reply@loveswipe.com>',
+      to: email,
+      subject: 'Verify Your Account',
+      html: `<p>Click <a href="http://localhost:8080/verify-email?token=${token}">here</a> to verify your email.</p>`
+    });
+
+    res.status(201).json({ message: 'Account created. Check your email to verify.' });
   } catch (err) {
-    console.error(err);
-    res.status(400).json({ error: err.message });
+    console.error('❌ Signup error:', err);
+    res.status(500).json({ error: 'Signup failed.' });
   }
 };
 
@@ -90,6 +123,10 @@ exports.login = async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
+
+    // if (!user.verified) {
+    //   return res.status(403).json({ error: 'Please verify your email before logging in.' });
+    // }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
