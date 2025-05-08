@@ -2,6 +2,10 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const isValidEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
 
 //SIGNING UP
 exports.signup = async (req, res) => {
@@ -10,6 +14,10 @@ exports.signup = async (req, res) => {
 
     if (!email || !username || !password || !birth || !gender) {
       return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ error: 'Invalid email format' });
     }
 
     // hashing the password
