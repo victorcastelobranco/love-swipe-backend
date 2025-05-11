@@ -7,7 +7,9 @@ const isValidEmail = (email) => {
   return emailRegex.test(email);
 };
 const { v4: uuidv4 } = require('uuid');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 
 //SIGNING UP
 exports.signup = async (req, res) => {
@@ -44,19 +46,11 @@ exports.signup = async (req, res) => {
         profilePicture  // ✅ add this
       }
     });
-       // 📧 Send verification email
-      const transporter = nodemailer.createTransport({
-        service: 'Gmail',
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS
-        }
-      });
 
       const token = uuidv4(); // ✅ generate the token
       const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
       
-      await prisma.verificationToken.create({
+      await prisma.verificationtoken.create({
         data: {
           token,
           userId: user.id,
@@ -64,12 +58,17 @@ exports.signup = async (req, res) => {
         }
       });
 
-    await transporter.sendMail({
-      from: '"Love Swipe" <no-reply@loveswipe.com>',
-      to: email,
-      subject: 'Verify Your Account',
-      html: `<p>Click <a href="http://localhost:8080/verify-email?token=${token}">here</a> to verify your email.</p>`
-    });
+      await resend.emails.send({
+        from: 'onboarding@resend.dev',  // or your verified sender domain
+        to: email, // ✅ actual user's email
+        subject: 'Verify Your LoveSwipe Account',
+        html: `
+          <p>Hi ${username},</p>
+          <p>Thanks for signing up! Click the link below to verify your account:</p>
+          <p><a href="http://localhost:8080/verify-email?token=${token}">Verify Email</a></p>
+          <p>This link will expire in 1 hour.</p>
+        `
+      });
 
     res.status(201).json({ message: 'Account created. Check your email to verify.' });
   } catch (err) {
@@ -110,7 +109,15 @@ exports.login = async (req, res) => {
         { expiresIn: process.env.JWT_EXPIRES_IN }
       );
 
-      return res.status(200).json({ message: "Admin login successful", token });
+      return res.status(200).json({
+        message: "Admin login successful",
+        token,
+        user: {
+          id: admin.id,
+          email: admin.email,
+          role: "admin"
+        }
+      });
     }
 
     // If not an Admin, check normal User
