@@ -17,6 +17,7 @@ async (accessToken, refreshToken, profile, done) => {
         data: {
           email: profile.emails[0].value,
           username: profile.displayName,
+          profilePicture: profile.photos?.[0]?.value || null,
           password: '', // empty or generate a random one
           verified: true,
         }

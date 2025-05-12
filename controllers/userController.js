@@ -7,9 +7,6 @@ const isValidEmail = (email) => {
   return emailRegex.test(email);
 };
 const { v4: uuidv4 } = require('uuid');
-const { Resend } = require('resend');
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 
 //SIGNING UP
 exports.signup = async (req, res) => {
@@ -58,17 +55,17 @@ exports.signup = async (req, res) => {
         }
       });
 
-      await resend.emails.send({
-        from: 'onboarding@resend.dev',  // or your verified sender domain
-        to: email, // ✅ actual user's email
-        subject: 'Verify Your LoveSwipe Account',
-        html: `
-          <p>Hi ${username},</p>
-          <p>Thanks for signing up! Click the link below to verify your account:</p>
-          <p><a href="http://localhost:8080/verify-email?token=${token}">Verify Email</a></p>
-          <p>This link will expire in 1 hour.</p>
-        `
-      });
+      // await resend.emails.send({
+      //   from: 'onboarding@resend.dev',  // or your verified sender domain
+      //   to: email, // ✅ actual user's email
+      //   subject: 'Verify Your LoveSwipe Account',
+      //   html: `
+      //     <p>Hi ${username},</p>
+      //     <p>Thanks for signing up! Click the link below to verify your account:</p>
+      //     <p><a href="http://localhost:8080/verify-email?token=${token}">Verify Email</a></p>
+      //     <p>This link will expire in 1 hour.</p>
+      //   `
+      // });
 
     res.status(201).json({ message: 'Account created. Check your email to verify.' });
   } catch (err) {
@@ -200,7 +197,7 @@ exports.updateProfile = async (req, res) => {
     const dataToUpdate = {
       username: updates.username?.trim() || currentUser.username,
       profilePicture: updates.profilePicture?.trim() || currentUser.profilePicture,
-      birth: updates.birth || currentUser.birth,
+      birth: updates.birth ? new Date(updates.birth) : currentUser.birth,
       gender: updates.gender || currentUser.gender,
       bio: updates.bio?.trim() || currentUser.bio,
       interests: updates.interests?.trim() || currentUser.interests,
