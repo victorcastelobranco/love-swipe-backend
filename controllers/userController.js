@@ -14,6 +14,8 @@ exports.signup = async (req, res) => {
   try {
     const { email, username, password, birth, gender, profilePicture } = req.body;
 
+    console.log("📥 Incoming signup payload:", req.body);
+
     if (!email || !username || !password || !birth || !gender) {
       return res.status(400).json({ error: "Missing required fields" });
     }
@@ -34,30 +36,19 @@ exports.signup = async (req, res) => {
         email,
         username,
         password: hashedPassword,
-        birth: new Date(birth),
+        birth: birth ? new Date(birth) : null,
         gender,
         verified: false,
         isPremium: false,
-        profilePicture,
-        profilePictures: profilePicture ? [profilePicture] : []
+        profilePicture: profilePicture || '',
+        profilePictures: profilePicture ? JSON.stringify([profilePicture]) : '[]'
       }
     });
 
-    const token = uuidv4();
-    const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
-
-    await prisma.verificationtoken.create({
-      data: {
-        token,
-        userId: user.id,
-        expiresAt
-      }
-    });
-
-    res.status(201).json({ message: 'Account created. Check your email to verify.' });
+    res.status(201).json({ message: 'Account created successfully!' });
   } catch (err) {
     console.error('❌ Signup error:', err);
-    res.status(500).json({ error: 'Signup failed.' });
+    res.status(500).json({ error: err.message || 'Signup failed.' });
   }
 };
 
@@ -182,10 +173,8 @@ exports.getRandomUser = async (req, res) => {
   const currentUserId = req.user.id;
 
   try {
-    // Debugging: Show current user's ID
     console.log("Fetching random user for user ID:", currentUserId);
 
-    // Query the users who are not the current user and not already matched/swiped
     const users = await prisma.$queryRaw`
       SELECT * FROM user
       WHERE id != ${currentUserId}
@@ -196,16 +185,27 @@ exports.getRandomUser = async (req, res) => {
       LIMIT 1
     `;
 
-    console.log("❓ Query result:", users);
-
-    // Debugging: Log the fetched users
     console.log("Fetched users:", users);
 
     if (users.length === 0) {
       return res.status(404).json({ error: 'No more users to swipe.' });
     }
 
-    res.json({ user: users[0] });
+    const user = users[0];
+
+    // ✅ FIX: Parse profilePictures if it's a JSON string
+    if (user.profilePictures) {
+      try {
+        user.profilePictures = JSON.parse(user.profilePictures);
+      } catch (e) {
+        console.warn("⚠️ Could not parse profilePictures:", user.profilePictures);
+        user.profilePictures = [];
+      }
+    } else {
+      user.profilePictures = [];
+    }
+
+    res.json({ user });
   } catch (err) {
     console.error('❌ Error fetching random user:', err);
     res.status(500).json({ error: 'Failed to fetch random user.' });
