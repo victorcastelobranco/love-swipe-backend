@@ -129,6 +129,11 @@ exports.getMe = async (req, res) => {
 
     if (!user) return res.status(404).json({ error: 'User not found' });
 
+    // ✅ Parse profilePictures if needed
+    user.profilePictures = user.profilePictures
+      ? JSON.parse(user.profilePictures)
+      : [];
+
     res.json(user);
   } catch (err) {
     console.error(err);
@@ -145,15 +150,14 @@ exports.updateProfile = async (req, res) => {
     const currentUser = await prisma.user.findUnique({ where: { id: userId } });
     if (!currentUser) return res.status(404).json({ error: "User not found" });
 
-    
     const pictures = Array.isArray(updates.profilePictures)
       ? updates.profilePictures.filter(p => p && typeof p === 'string' && p.trim() !== '')
-      : currentUser.profilePictures;
+      : JSON.parse(currentUser.profilePictures || '[]');
 
     const dataToUpdate = {
       username: updates.username?.trim() || currentUser.username,
       profilePicture: updates.profilePicture?.trim() || currentUser.profilePicture,
-      profilePictures: { set: pictures },  // ✅ here
+      profilePictures: JSON.stringify(pictures),
       birth: updates.birth ? new Date(updates.birth) : currentUser.birth,
       gender: updates.gender || currentUser.gender,
       bio: updates.bio?.trim() || currentUser.bio,
@@ -165,8 +169,6 @@ exports.updateProfile = async (req, res) => {
       where: { id: userId },
       data: dataToUpdate
     });
-
-    
 
     res.status(200).json({ message: 'Profile updated', user: updatedUser });
   } catch (err) {
@@ -210,14 +212,23 @@ exports.getUserById = async (req, res) => {
         id: true,
         username: true,
         profilePicture: true,
+        profilePictures: true, // ✅ include it
         birth: true,
+        gender: true,
         bio: true,
         interests: true,
         location: true
       }
     });
 
-    if (!user) return res.status(404).json({ error: "User not found" });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // ✅ Parse profilePictures if stored as string
+    user.profilePictures = user.profilePictures
+      ? JSON.parse(user.profilePictures)
+      : [];
 
     res.json(user);
   } catch (err) {
