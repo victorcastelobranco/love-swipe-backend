@@ -13,41 +13,36 @@ exports.matchUser = async (req, res) => {
   }
 
   try {
-    // ✅ Get the current user's premium status
-    const currentUser = await prisma.user.findUnique({
-      where: { id: currentUserId },
-      select: { isPremium: true }
-    });
-
-    const MAX_SWIPES = currentUser.isPremium ? 20 : 10;
-
-    // ✅ Count how many swipes the user made today
+    // Count the number of matches today for the current user based on 'timestamp'
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);  // Set the time to midnight for accurate comparison
 
     const swipeCount = await prisma.matches.count({
       where: {
         user1Id: currentUserId,
-        createdAt: { gte: today }
+        timestamp: {
+          gte: today  // Ensure we're counting only today's matches
+        }
       }
     });
 
-    if (swipeCount >= MAX_SWIPES) {
-      return res.status(403).json({
-        error: `Daily swipe limit reached. Upgrade to premium for more swipes.`
-      });
+    console.log('Swipe count:', swipeCount);  // Log the swipe count
+
+    if (swipeCount >= 10) {
+      return res.status(403).json({ error: 'Swipe limit reached for today.' });
     }
 
-    // ✅ Check if the liked user already liked the current user
+    // Check if the liked user already liked the current user
     const existingLike = await prisma.matches.findFirst({
       where: {
-        user1Id: likedUserId,
-        user2Id: currentUserId
+        user1Id: likedUserId,  // The user who liked the current user
+        user2Id: currentUserId // The current user who is being liked
       }
     });
 
     if (existingLike) {
       // It's a match!
+      console.log('🎉 Match found!');
       await prisma.matches.update({
         where: { id: existingLike.id },
         data: { isMutual: true }
@@ -64,6 +59,7 @@ exports.matchUser = async (req, res) => {
       return res.status(200).json({ message: "🎉 It's a match!" });
     } else {
       // Just store the like (not mutual yet)
+      console.log('👍 Liked but no match yet');
       await prisma.matches.create({
         data: {
           user1Id: currentUserId,

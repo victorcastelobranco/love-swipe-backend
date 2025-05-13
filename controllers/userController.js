@@ -182,21 +182,30 @@ exports.getRandomUser = async (req, res) => {
   const currentUserId = req.user.id;
 
   try {
-    const [randomUser] = await prisma.$queryRaw`
+    // Debugging: Show current user's ID
+    console.log("Fetching random user for user ID:", currentUserId);
+
+    // Query the users who are not the current user and not already matched/swiped
+    const users = await prisma.$queryRaw`
       SELECT * FROM user
       WHERE id != ${currentUserId}
       AND id NOT IN (
         SELECT user2Id FROM matches WHERE user1Id = ${currentUserId}
-        UNION
-        SELECT user1Id FROM matches WHERE user2Id = ${currentUserId}
       )
-      ORDER BY RANDOM()
+      ORDER BY RAND()
       LIMIT 1
     `;
 
-    if (!randomUser) return res.status(404).json({ error: 'No more users to swipe.' });
+    console.log("❓ Query result:", users);
 
-    res.json({ user: randomUser });
+    // Debugging: Log the fetched users
+    console.log("Fetched users:", users);
+
+    if (users.length === 0) {
+      return res.status(404).json({ error: 'No more users to swipe.' });
+    }
+
+    res.json({ user: users[0] });
   } catch (err) {
     console.error('❌ Error fetching random user:', err);
     res.status(500).json({ error: 'Failed to fetch random user.' });
