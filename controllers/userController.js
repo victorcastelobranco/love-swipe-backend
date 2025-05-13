@@ -2,70 +2,57 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { v4: uuidv4 } = require('uuid');
+
 const isValidEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
-const { v4: uuidv4 } = require('uuid');
 
-//SIGNING UP
+// SIGNUP
 exports.signup = async (req, res) => {
   try {
     const { email, username, password, birth, gender, profilePicture } = req.body;
-    //all fields must be filled
+
     if (!email || !username || !password || !birth || !gender) {
       return res.status(400).json({ error: "Missing required fields" });
     }
-    //check regex for valid email
+
     if (!isValidEmail(email)) {
       return res.status(400).json({ error: 'Invalid email format' });
     }
-    //check same email or not
+
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
       return res.status(400).json({ error: 'Email already registered' });
     }
 
-    // hashing the password
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    console.log("🔐 Hashed password:", hashedPassword);
 
     const user = await prisma.user.create({
       data: {
         email,
         username,
-        password: hashedPassword, //storing the hashed password created and not the plain one
+        password: hashedPassword,
         birth: new Date(birth),
         gender,
         verified: false,
         isPremium: false,
-        profilePicture  // ✅ add this
+        profilePicture,
+        profilePictures: profilePicture ? [profilePicture] : []
       }
     });
 
-      const token = uuidv4(); // ✅ generate the token
-      const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
-      
-      await prisma.verificationtoken.create({
-        data: {
-          token,
-          userId: user.id,
-          expiresAt
-        }
-      });
+    const token = uuidv4();
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
 
-      // await resend.emails.send({
-      //   from: 'onboarding@resend.dev',  // or your verified sender domain
-      //   to: email, // ✅ actual user's email
-      //   subject: 'Verify Your LoveSwipe Account',
-      //   html: `
-      //     <p>Hi ${username},</p>
-      //     <p>Thanks for signing up! Click the link below to verify your account:</p>
-      //     <p><a href="http://localhost:8080/verify-email?token=${token}">Verify Email</a></p>
-      //     <p>This link will expire in 1 hour.</p>
-      //   `
-      // });
+    await prisma.verificationtoken.create({
+      data: {
+        token,
+        userId: user.id,
+        expiresAt
+      }
+    });
 
     res.status(201).json({ message: 'Account created. Check your email to verify.' });
   } catch (err) {
@@ -74,31 +61,19 @@ exports.signup = async (req, res) => {
   }
 };
 
-
-//LOGIN IN
+// LOGIN
 exports.login = async (req, res) => {
   const { email, password } = req.body;
-
-  console.log('🛠️ Trying login with:', email);
 
   if (!email || !password) {
     return res.status(400).json({ error: "Email and password are required" });
   }
 
   try {
-    // First, check if user is an Admin
-    const admin = await prisma.admin.findUnique({
-      where: { email }
-    });
-
-    console.log('🔎 Admin found:', admin);
-
+    const admin = await prisma.admin.findUnique({ where: { email } });
     if (admin) {
       const isMatch = await bcrypt.compare(password, admin.password);
-
-      if (!isMatch) {
-        return res.status(401).json({ error: "Incorrect password" });
-      }
+      if (!isMatch) return res.status(401).json({ error: "Incorrect password" });
 
       const token = jwt.sign(
         { id: admin.id, email: admin.email, role: "admin" },
@@ -109,34 +84,15 @@ exports.login = async (req, res) => {
       return res.status(200).json({
         message: "Admin login successful",
         token,
-        user: {
-          id: admin.id,
-          email: admin.email,
-          role: "admin"
-        }
+        user: { id: admin.id, email: admin.email, role: "admin" }
       });
     }
 
-    // If not an Admin, check normal User
-    const user = await prisma.user.findUnique({
-      where: { email }
-    });
-
-    console.log('🔎 User found:', user);
-
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    // if (!user.verified) {
-    //   return res.status(403).json({ error: 'Please verify your email before logging in.' });
-    // }
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) return res.status(404).json({ error: "User not found" });
 
     const isMatch = await bcrypt.compare(password, user.password);
-
-    if (!isMatch) {
-      return res.status(401).json({ error: "Incorrect password" });
-    }
+    if (!isMatch) return res.status(401).json({ error: "Incorrect password" });
 
     const token = jwt.sign(
       { id: user.id, email: user.email, role: "user" },
@@ -145,13 +101,13 @@ exports.login = async (req, res) => {
     );
 
     res.status(200).json({ message: "User login successful", token, user });
-
   } catch (err) {
     console.error('❌ Login error:', err);
     res.status(500).json({ error: "Server error during login" });
   }
 };
 
+// GET LOGGED-IN USER
 exports.getMe = async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
@@ -163,6 +119,7 @@ exports.getMe = async (req, res) => {
         gender: true,
         birth: true,
         profilePicture: true,
+        profilePictures: true,
         isPremium: true,
         bio: true,
         interests: true,
@@ -170,9 +127,7 @@ exports.getMe = async (req, res) => {
       }
     });
 
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
+    if (!user) return res.status(404).json({ error: 'User not found' });
 
     res.json(user);
   } catch (err) {
@@ -180,23 +135,25 @@ exports.getMe = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch user profile' });
   }
 };
-  
+
+// UPDATE PROFILE
 exports.updateProfile = async (req, res) => {
   const userId = req.user.id;
   const updates = req.body;
 
   try {
-    // Fetch current user
     const currentUser = await prisma.user.findUnique({ where: { id: userId } });
+    if (!currentUser) return res.status(404).json({ error: "User not found" });
 
-    if (!currentUser) {
-      return res.status(404).json({ error: "User not found" });
-    }
+    
+    const pictures = Array.isArray(updates.profilePictures)
+      ? updates.profilePictures.filter(p => p && typeof p === 'string' && p.trim() !== '')
+      : currentUser.profilePictures;
 
-    // Only update fields that are provided (not null/undefined/empty string)
     const dataToUpdate = {
       username: updates.username?.trim() || currentUser.username,
       profilePicture: updates.profilePicture?.trim() || currentUser.profilePicture,
+      profilePictures: { set: pictures },  // ✅ here
       birth: updates.birth ? new Date(updates.birth) : currentUser.birth,
       gender: updates.gender || currentUser.gender,
       bio: updates.bio?.trim() || currentUser.bio,
@@ -209,6 +166,8 @@ exports.updateProfile = async (req, res) => {
       data: dataToUpdate
     });
 
+    
+
     res.status(200).json({ message: 'Profile updated', user: updatedUser });
   } catch (err) {
     console.error("❌ Failed to update profile:", err);
@@ -216,6 +175,7 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
+// GET RANDOM USER
 exports.getRandomUser = async (req, res) => {
   const currentUserId = req.user.id;
 
@@ -228,13 +188,11 @@ exports.getRandomUser = async (req, res) => {
         UNION
         SELECT user1Id FROM matches WHERE user2Id = ${currentUserId}
       )
-      ORDER BY RAND()
+      ORDER BY RANDOM()
       LIMIT 1
     `;
 
-    if (!randomUser) {
-      return res.status(404).json({ error: 'No more users to swipe.' });
-    }
+    if (!randomUser) return res.status(404).json({ error: 'No more users to swipe.' });
 
     res.json({ user: randomUser });
   } catch (err) {
@@ -243,7 +201,7 @@ exports.getRandomUser = async (req, res) => {
   }
 };
 
-// ➡️ Fetch another user's public profile
+// GET PUBLIC PROFILE BY ID
 exports.getUserById = async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
@@ -255,13 +213,11 @@ exports.getUserById = async (req, res) => {
         birth: true,
         bio: true,
         interests: true,
-        location: true // ✅ Add this line
+        location: true
       }
     });
 
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
+    if (!user) return res.status(404).json({ error: "User not found" });
 
     res.json(user);
   } catch (err) {
@@ -270,12 +226,12 @@ exports.getUserById = async (req, res) => {
   }
 };
 
-// ➡️ Save or update user preferences
+// UPDATE PREFERENCES
 exports.updatePreferences = async (req, res) => {
   const { preferredGender, preferredLocation, minAge, maxAge } = req.body;
 
   try {
-    const preferences = await prisma.userpreferences.upsert({   // <-- lowercase here!
+    const preferences = await prisma.userpreferences.upsert({
       where: { userId: req.user.id },
       update: {
         preferredGender,
@@ -296,5 +252,35 @@ exports.updatePreferences = async (req, res) => {
   } catch (err) {
     console.error("❌ Error saving preferences:", err);
     res.status(500).json({ error: "Failed to save preferences" });
+  }
+};
+
+// CHANGE PASSWORD
+exports.changePassword = async (req, res) => {
+  const userId = req.user.id;
+  const { oldPassword, newPassword } = req.body;
+
+  if (!oldPassword || !newPassword) {
+    return res.status(400).json({ error: 'Both old and new passwords are required.' });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) return res.status(404).json({ error: 'User not found.' });
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) return res.status(401).json({ error: 'Old password is incorrect.' });
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword }
+    });
+
+    res.status(200).json({ message: 'Password updated successfully.' });
+  } catch (err) {
+    console.error('❌ Error changing password:', err);
+    res.status(500).json({ error: 'Server error.' });
   }
 };

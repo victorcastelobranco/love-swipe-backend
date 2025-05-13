@@ -6,14 +6,39 @@ exports.matchUser = async (req, res) => {
   const currentUserId = req.user.id;
   const { likedUserId } = req.body;
 
-  console.log("💡 matchUser triggered by userId:", req.user.id, "liking:", req.body.likedUserId);
-  
+  console.log("💡 matchUser triggered by userId:", currentUserId, "liking:", likedUserId);
+
   if (!likedUserId || likedUserId === currentUserId) {
     return res.status(400).json({ error: "Invalid user" });
   }
 
   try {
-    // Check if the liked user already liked the current user
+    // ✅ Get the current user's premium status
+    const currentUser = await prisma.user.findUnique({
+      where: { id: currentUserId },
+      select: { isPremium: true }
+    });
+
+    const MAX_SWIPES = currentUser.isPremium ? 20 : 10;
+
+    // ✅ Count how many swipes the user made today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const swipeCount = await prisma.matches.count({
+      where: {
+        user1Id: currentUserId,
+        createdAt: { gte: today }
+      }
+    });
+
+    if (swipeCount >= MAX_SWIPES) {
+      return res.status(403).json({
+        error: `Daily swipe limit reached. Upgrade to premium for more swipes.`
+      });
+    }
+
+    // ✅ Check if the liked user already liked the current user
     const existingLike = await prisma.matches.findFirst({
       where: {
         user1Id: likedUserId,

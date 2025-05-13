@@ -51,6 +51,7 @@ model user {
   location                         String?             @db.VarChar(100)
   interests                        String?             @db.VarChar(255)
   profilePicture                   String?             @db.Text
+  profilePictures                  String?             @db.Text
   verified                         Boolean?            @default(false)
   isPremium                        Boolean?            @default(false)
   matches_matches_user1IdTouser    matches[]           @relation("matches_user1IdTouser")
