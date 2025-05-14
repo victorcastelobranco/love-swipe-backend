@@ -246,35 +246,6 @@ exports.getUserById = async (req, res) => {
   }
 };
 
-// UPDATE PREFERENCES
-exports.updatePreferences = async (req, res) => {
-  const { preferredGender, preferredLocation, minAge, maxAge } = req.body;
-
-  try {
-    const preferences = await prisma.userpreferences.upsert({
-      where: { userId: req.user.id },
-      update: {
-        preferredGender,
-        preferredLocation,
-        minAge: minAge ? parseInt(minAge) : null,
-        maxAge: maxAge ? parseInt(maxAge) : null
-      },
-      create: {
-        userId: req.user.id,
-        preferredGender,
-        preferredLocation,
-        minAge: minAge ? parseInt(minAge) : null,
-        maxAge: maxAge ? parseInt(maxAge) : null
-      }
-    });
-
-    res.status(200).json({ message: "Preferences saved!", preferences });
-  } catch (err) {
-    console.error("❌ Error saving preferences:", err);
-    res.status(500).json({ error: "Failed to save preferences" });
-  }
-};
-
 // CHANGE PASSWORD
 exports.changePassword = async (req, res) => {
   const userId = req.user.id;
@@ -302,5 +273,130 @@ exports.changePassword = async (req, res) => {
   } catch (err) {
     console.error('❌ Error changing password:', err);
     res.status(500).json({ error: 'Server error.' });
+  }
+};
+
+exports.updatePreferences = async (req, res) => {
+  const userId = req.user.id;
+  let { preferredGender, minAge, maxAge, preferredLocation } = req.body;
+
+  // 🧼 Sanitize and convert input
+  minAge = isNaN(parseInt(minAge)) ? null : parseInt(minAge);
+  maxAge = isNaN(parseInt(maxAge)) ? null : parseInt(maxAge);
+  preferredLocation = preferredLocation?.trim() || null;
+  preferredGender = preferredGender?.trim() || null;
+
+  try {
+    const updated = await prisma.userpreferences.upsert({
+      where: { userId },
+      update: {
+        preferredGender,
+        minAge,
+        maxAge,
+        preferredLocation
+      },
+      create: {
+        userId,
+        preferredGender,
+        minAge,
+        maxAge,
+        preferredLocation
+      }
+    });
+
+    res.json({ message: 'Preferences saved successfully.', preferences: updated });
+  } catch (err) {
+    console.error('❌ Error saving preferences:', err);
+    res.status(500).json({ error: 'Failed to save preferences.' });
+  }
+};
+
+exports.getUserByPreference = async (req, res) => {
+  const currentUserId = req.user.id;
+
+  try {
+    console.log("🔥 getUserByPreference was called by:", currentUserId);
+
+    const preferences = await prisma.userpreferences.findUnique({
+      where: { userId: currentUserId }
+    });
+
+    if (!preferences) {
+      console.warn("⚠️ No preferences found for user:", currentUserId);
+      return res.status(400).json({ error: "Preferences not found." });
+    }
+
+    const today = new Date();
+    const minBirth = preferences.maxAge
+      ? new Date(today.getFullYear() - preferences.maxAge, today.getMonth(), today.getDate())
+      : null;
+
+    const maxBirth = preferences.minAge
+      ? new Date(today.getFullYear() - preferences.minAge, today.getMonth(), today.getDate())
+      : null;
+
+    const conditions = [`id != ${currentUserId}`];
+
+    conditions.push(`
+      id NOT IN (
+        SELECT user2Id FROM matches WHERE user1Id = ${currentUserId}
+      )
+    `);
+
+    if (preferences.preferredGender) {
+      const gender = preferences.preferredGender.toLowerCase();
+      conditions.push(`LOWER(gender) = '${gender}'`);
+    }
+
+    if (minBirth && maxBirth) {
+      conditions.push(`birth BETWEEN '${minBirth.toISOString()}' AND '${maxBirth.toISOString()}'`);
+    }
+
+    if (preferences.preferredLocation) {
+      const location = preferences.preferredLocation.toLowerCase();
+      conditions.push(`LOWER(location) = '${location}'`);
+    }
+
+    const query = `
+      SELECT * FROM user
+      WHERE ${conditions.join(' AND ')}
+      ORDER BY RAND()
+      LIMIT 1
+    `;
+
+    console.log("🧪 Executing SQL query:\n", query);
+
+    const users = await prisma.$queryRawUnsafe(query);
+
+    if (!users.length) {
+      return res.status(404).json({ error: 'No matching users found for your preferences.' });
+    }
+
+    const user = users[0];
+
+    // Parse profilePictures safely
+    try {
+      user.profilePictures = JSON.parse(user.profilePictures || '[]');
+    } catch {
+      user.profilePictures = [];
+    }
+
+    res.json({ user });
+  } catch (err) {
+    console.error('❌ Error in getUserByPreference:', err);
+    res.status(500).json({ error: 'Failed to fetch user by preference.' });
+  }
+};
+
+exports.getPreferences = async (req, res) => {
+  try {
+    const prefs = await prisma.userpreferences.findUnique({
+      where: { userId: req.user.id }
+    });
+
+    res.json({ preferences: prefs || {} });
+  } catch (err) {
+    console.error("❌ Failed to fetch preferences:", err);
+    res.status(500).json({ error: "Could not load preferences." });
   }
 };
