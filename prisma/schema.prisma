@@ -42,8 +42,8 @@ model message {
 
 model user {
   id                               Int                 @id @default(autoincrement())
-  username                         String              @unique(map: "user_username") @db.VarChar(100)
-  email                            String              @unique(map: "user_email") @db.VarChar(100)
+  username                         String              @db.VarChar(100)
+  email                            String              @unique(map: "email") @db.VarChar(100)
   password                         String              @db.VarChar(255)
   bio                              String?             @db.Text
   birth                            DateTime?           @db.Date

@@ -8,6 +8,7 @@ const isValidEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
+const nodemailer = require('nodemailer');
 
 // SIGNUP
 exports.signup = async (req, res) => {
@@ -45,7 +46,48 @@ exports.signup = async (req, res) => {
       }
     });
 
-    res.status(201).json({ message: 'Account created successfully!' });
+    // ✅ Step: Create a verification token
+    const { v4: uuidv4 } = require('uuid');
+    const nodemailer = require('nodemailer');
+
+    const token = uuidv4();
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
+
+    await prisma.verificationtoken.create({
+      data: {
+        token,
+        userId: user.id,
+        expiresAt,
+      },
+    });
+
+    console.log("✅ Verification token created and saved.");
+
+    const verificationLink = `http://localhost:3000/api/verify-email?token=${token}`;
+
+    // ✅ Email config (adjust for production if needed)
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    await transporter.sendMail({
+      from: `"LoveSwipe" <${process.env.EMAIL_USER}>`,
+      to: user.email,
+      subject: 'Verify your LoveSwipe account',
+      html: `
+        <p>Welcome to LoveSwipe, ${user.username}!</p>
+        <p>Please verify your email by clicking the link below:</p>
+        <a href="${verificationLink}">${verificationLink}</a>
+        <p>This link will expire in 1 hour.</p>
+      `,
+    });
+
+    res.status(201).json({ message: 'Account created! Please check your email to verify your account.' });
+
   } catch (err) {
     console.error('❌ Signup error:', err);
     res.status(500).json({ error: err.message || 'Signup failed.' });

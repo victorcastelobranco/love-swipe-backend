@@ -7,7 +7,7 @@ router.get('/verify-email', async (req, res) => {
   const { token } = req.query;
 
   try {
-    const record = await prisma.verificationToken.findUnique({ where: { token } });
+    const record = await prisma.verificationtoken.findUnique({ where: { token } });
 
     if (!record || new Date() > record.expiresAt) {
       return res.status(400).send('Invalid or expired verification token.');
@@ -18,7 +18,7 @@ router.get('/verify-email', async (req, res) => {
       data: { verified: true }
     });
 
-    await prisma.verificationToken.delete({ where: { token } });
+    await prisma.verificationtoken.delete({ where: { token } });
 
     return res.redirect('http://localhost:8080/login?verified=1');
   } catch (err) {
