@@ -83,6 +83,7 @@ exports.getMatches = async (req, res) => {
   const currentUserId = req.user.id;
 
   try {
+    // Step 1: Fetch all mutual matches
     const matches = await prisma.matches.findMany({
       where: {
         isMutual: true,
@@ -101,15 +102,15 @@ exports.getMatches = async (req, res) => {
       }
     });
 
-    // Map to matched users (not current user)
+    // Step 2: Collect the matched users (exclude self)
     const otherUsers = matches.map(match => {
       const isUser1 = match.user1Id === currentUserId;
       return isUser1 ? match.user_matches_user2IdTouser : match.user_matches_user1IdTouser;
     });
 
-    // 🧹 Remove duplicates by ID
-    const uniqueUsers = [];
+    // Step 3: Remove duplicates by ID
     const seenIds = new Set();
+    const uniqueUsers = [];
 
     for (const user of otherUsers) {
       if (!seenIds.has(user.id)) {
@@ -118,7 +119,30 @@ exports.getMatches = async (req, res) => {
       }
     }
 
-    res.status(200).json({ matches: uniqueUsers });
+    // Step 4: Get blocked user IDs (blocked by current user or who blocked current user)
+    const blockedRelations = await prisma.block.findMany({
+      where: {
+        OR: [
+          { blockerId: currentUserId },
+          { blockedId: currentUserId }
+        ]
+      }
+    });
+
+    const blockedIds = new Set();
+    blockedRelations.forEach(rel => {
+      if (rel.blockerId === currentUserId) {
+        blockedIds.add(rel.blockedId); // You blocked them
+      } else {
+        blockedIds.add(rel.blockerId); // They blocked you
+      }
+    });
+
+    // Step 5: Filter out blocked users from the matches list
+    const filteredUsers = uniqueUsers.filter(user => !blockedIds.has(user.id));
+
+    // ✅ Respond
+    res.status(200).json({ matches: filteredUsers });
   } catch (err) {
     console.error("❌ Error fetching matches:", err);
     res.status(500).json({ error: "Failed to fetch matches" });

@@ -1,8 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { blockUser } = require('../controllers/blockController');
-const authenticate = require('../middleware/auth'); // your JWT middleware
+const auth = require('../middleware/auth');
+const {
+  blockUser,
+  getBlockedUsers,
+  unblockUser
+} = require('../controllers/blockController');
 
-router.post('/', authenticate, blockUser);
+router.post('/', auth(), blockUser);
+router.get('/', auth(), getBlockedUsers);
+router.delete('/', auth(), unblockUser);
 
 module.exports = router;

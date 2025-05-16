@@ -273,6 +273,19 @@ exports.getUserById = async (req, res) => {
       }
     });
 
+    const isBlocked = await prisma.block.findFirst({
+      where: {
+        OR: [
+          { blockerId: req.user.id, blockedId: parseInt(req.params.id) },
+          { blockerId: parseInt(req.params.id), blockedId: req.user.id }
+        ]
+      }
+    });
+
+    if (isBlocked) {
+      return res.status(403).json({ error: 'This profile is not available.' });
+    }
+
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -418,6 +431,10 @@ exports.getUserByPreference = async (req, res) => {
       WHERE ${conditions.join(' AND ')}
       ORDER BY RAND()
       LIMIT 1
+      AND id NOT IN (
+      SELECT blockedId FROM block WHERE blockerId = ${currentUserId}
+      UNION
+      SELECT bloc
     `;
 
     console.log("🧪 Executing SQL query:\n", query);

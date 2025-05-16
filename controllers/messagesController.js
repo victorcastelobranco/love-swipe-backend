@@ -7,6 +7,20 @@ exports.sendMessage = async (req, res) => {
   const { receiverId, content } = req.body;
   const senderId = req.user.id;
 
+    const blocked = await prisma.block.findFirst({
+      where: {
+        OR: [
+          { blockerId: senderId, blockedId: receiverId },
+          { blockerId: receiverId, blockedId: senderId }
+        ]
+      }
+    });
+
+    if (blocked) {
+      return res.status(403).json({ error: 'Messaging is blocked between these users.' });
+    }
+  
+
   if (!receiverId || !content) {
     return res.status(400).json({ error: "Missing receiverId or content" });
   }
@@ -44,10 +58,24 @@ exports.sendMessage = async (req, res) => {
 
 // ➡️ Get conversation between two users
 exports.getMessages = async (req, res) => {
-  const { userId } = req.params;
+  const { userId } = req.params; // person you're chatting with
   const currentUserId = req.user.id;
 
   try {
+    // Block check: current user blocked the other or was blocked by them
+    const blocked = await prisma.block.findFirst({
+      where: {
+        OR: [
+          { blockerId: currentUserId, blockedId: parseInt(userId) },
+          { blockerId: parseInt(userId), blockedId: currentUserId }
+        ]
+      }
+    });
+
+    if (blocked) {
+      return res.status(403).json({ error: 'Chat is blocked.' });
+    }
+
     const messages = await prisma.message.findMany({
       where: {
         OR: [

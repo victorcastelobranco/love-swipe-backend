@@ -23,3 +23,46 @@ exports.blockUser = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+// Get all users blocked by current user
+exports.getBlockedUsers = async (req, res) => {
+  try {
+    const blocked = await prisma.block.findMany({
+      where: { blockerId: req.user.id },
+      include: {
+        user_block_blockedIdTouser: true
+      }
+    });
+
+    const users = blocked.map(b => ({
+      id: b.user_block_blockedIdTouser.id,
+      username: b.user_block_blockedIdTouser.username,
+      profilePicture: b.user_block_blockedIdTouser.profilePicture
+    }));
+
+    res.json({ blockedUsers: users });
+  } catch (err) {
+    console.error("❌ Failed to get blocked users:", err);
+    res.status(500).json({ error: 'Failed to fetch blocked users.' });
+  }
+};
+
+exports.unblockUser = async (req, res) => {
+  const blockerId = req.user.id;
+  const { blockedId } = req.body;
+
+  try {
+    await prisma.block.delete({
+      where: {
+        blockerId_blockedId: {
+          blockerId,
+          blockedId
+        }
+      }
+    });
+    res.json({ message: 'User unblocked successfully.' });
+  } catch (err) {
+    console.error('❌ Unblock error:', err);
+    res.status(500).json({ error: 'Failed to unblock user.' });
+  }
+};
