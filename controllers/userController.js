@@ -223,6 +223,12 @@ exports.getRandomUser = async (req, res) => {
       AND id NOT IN (
         SELECT user2Id FROM matches WHERE user1Id = ${currentUserId}
       )
+      AND id NOT IN (
+        SELECT blockedId FROM block WHERE blockerId = ${currentUserId}
+      )
+      AND id NOT IN (
+        SELECT blockerId FROM block WHERE blockedId = ${currentUserId}
+      )
       ORDER BY RAND()
       LIMIT 1
     `;
@@ -235,15 +241,10 @@ exports.getRandomUser = async (req, res) => {
 
     const user = users[0];
 
-    // ✅ FIX: Parse profilePictures if it's a JSON string
-    if (user.profilePictures) {
-      try {
-        user.profilePictures = JSON.parse(user.profilePictures);
-      } catch (e) {
-        console.warn("⚠️ Could not parse profilePictures:", user.profilePictures);
-        user.profilePictures = [];
-      }
-    } else {
+    try {
+      user.profilePictures = JSON.parse(user.profilePictures || '[]');
+    } catch (e) {
+      console.warn("⚠️ Could not parse profilePictures:", user.profilePictures);
       user.profilePictures = [];
     }
 
@@ -385,6 +386,19 @@ exports.getUserByPreference = async (req, res) => {
       )
     `);
 
+    // Exclude blocked users (both directions)
+    conditions.push(`
+      id NOT IN (
+        SELECT blockedId FROM block WHERE blockerId = ${currentUserId}
+      )
+    `);
+
+    conditions.push(`
+      id NOT IN (
+        SELECT blockerId FROM block WHERE blockedId = ${currentUserId}
+      )
+    `);
+
     if (preferences.preferredGender) {
       const gender = preferences.preferredGender.toLowerCase();
       conditions.push(`LOWER(gender) = '${gender}'`);
@@ -416,7 +430,6 @@ exports.getUserByPreference = async (req, res) => {
 
     const user = users[0];
 
-    // Parse profilePictures safely
     try {
       user.profilePictures = JSON.parse(user.profilePictures || '[]');
     } catch {

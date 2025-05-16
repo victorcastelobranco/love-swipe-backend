@@ -41,6 +41,7 @@ console.log('DEBUG: adminRouter =', adminRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/auth', require('./routes/oauth'));
 app.use('/api', verifyRoutes);
+app.use('/api/block', require('./routes/block'));
 
 //google oauth part
 app.use(session({

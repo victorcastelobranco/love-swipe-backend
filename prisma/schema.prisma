@@ -54,6 +54,8 @@ model user {
   profilePictures                  String?             @db.LongText
   verified                         Boolean?            @default(false)
   isPremium                        Boolean?            @default(false)
+  block_block_blockedIdTouser      block[]             @relation("block_blockedIdTouser")
+  block_block_blockerIdTouser      block[]             @relation("block_blockerIdTouser")
   matches_matches_user1IdTouser    matches[]           @relation("matches_user1IdTouser")
   matches_matches_user2IdTouser    matches[]           @relation("matches_user2IdTouser")
   message_message_senderIdTouser   message[]           @relation("message_senderIdTouser")
@@ -81,4 +83,16 @@ model verificationtoken {
   user      user      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "verificationtoken_ibfk_1")
 
   @@index([userId], map: "userId")
+}
+
+model block {
+  id                         Int       @id @default(autoincrement())
+  blockerId                  Int
+  blockedId                  Int
+  createdAt                  DateTime? @default(now()) @db.DateTime(0)
+  user_block_blockedIdTouser user      @relation("block_blockedIdTouser", fields: [blockedId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_block_blocked")
+  user_block_blockerIdTouser user      @relation("block_blockerIdTouser", fields: [blockerId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_block_blocker")
+
+  @@unique([blockerId, blockedId], map: "unique_block_pair")
+  @@index([blockedId], map: "fk_block_blocked")
 }
