@@ -41,25 +41,26 @@ model message {
 }
 
 model user {
-  id                               Int                 @id @default(autoincrement())
-  username                         String              @db.VarChar(100)
-  email                            String              @unique(map: "email") @db.VarChar(100)
-  password                         String              @db.VarChar(255)
-  bio                              String?             @db.Text
-  birth                            DateTime?           @db.Date
-  gender                           String?             @db.VarChar(10)
-  location                         String?             @db.VarChar(100)
-  interests                        String?             @db.VarChar(255)
-  profilePicture                   String?             @db.Text
-  profilePictures                  String?             @db.LongText
-  verified                         Boolean?            @default(false)
-  isPremium                        Boolean?            @default(false)
-  block_block_blockedIdTouser      block[]             @relation("block_blockedIdTouser")
-  block_block_blockerIdTouser      block[]             @relation("block_blockerIdTouser")
-  matches_matches_user1IdTouser    matches[]           @relation("matches_user1IdTouser")
-  matches_matches_user2IdTouser    matches[]           @relation("matches_user2IdTouser")
-  message_message_senderIdTouser   message[]           @relation("message_senderIdTouser")
-  message_message_receiverIdTouser message[]           @relation("message_receiverIdTouser")
+  id                               Int                  @id @default(autoincrement())
+  username                         String               @db.VarChar(100)
+  email                            String               @unique(map: "email") @db.VarChar(100)
+  password                         String               @db.VarChar(255)
+  bio                              String?              @db.Text
+  birth                            DateTime?            @db.Date
+  gender                           String?              @db.VarChar(10)
+  location                         String?              @db.VarChar(100)
+  interests                        String?              @db.VarChar(255)
+  profilePicture                   String?              @db.Text
+  profilePictures                  String?              @db.LongText
+  verified                         Boolean?             @default(false)
+  isPremium                        Boolean?             @default(false)
+  block_block_blockedIdTouser      block[]              @relation("block_blockedIdTouser")
+  block_block_blockerIdTouser      block[]              @relation("block_blockerIdTouser")
+  matches_matches_user1IdTouser    matches[]            @relation("matches_user1IdTouser")
+  matches_matches_user2IdTouser    matches[]            @relation("matches_user2IdTouser")
+  message_message_senderIdTouser   message[]            @relation("message_senderIdTouser")
+  message_message_receiverIdTouser message[]            @relation("message_receiverIdTouser")
+  passwordresettoken               passwordresettoken[]
   userpreferences                  userpreferences?
   verificationtoken                verificationtoken[]
 }
@@ -95,4 +96,15 @@ model block {
 
   @@unique([blockerId, blockedId], map: "unique_block_pair")
   @@index([blockedId], map: "fk_block_blocked")
+}
+
+model passwordresettoken {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  token     String    @unique(map: "token") @db.VarChar(255)
+  expiresAt DateTime  @db.DateTime(0)
+  createdAt DateTime? @default(now()) @db.DateTime(0)
+  user      user      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "passwordresettoken_ibfk_1")
+
+  @@index([userId], map: "userId")
 }

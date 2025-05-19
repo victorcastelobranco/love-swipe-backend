@@ -17,6 +17,7 @@ const matchesRouter = require('./routes/matches');
 const messagesRouter = require('./routes/messages');
 const adminRouter = require('./routes/admin'); // <-- your admin routes
 const verifyRoutes = require('./routes/verify');
+const passwordResetRoutes = require('./routes/passwordReset');
 
 
 const app = express();
@@ -42,6 +43,7 @@ app.use('/api/admin', adminRouter);
 app.use('/api/auth', require('./routes/oauth'));
 app.use('/api', verifyRoutes);
 app.use('/api/block', require('./routes/block'));
+app.use('/api/password', passwordResetRoutes);
 
 //google oauth part
 app.use(session({
