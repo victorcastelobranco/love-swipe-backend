@@ -31,20 +31,33 @@ exports.register = async (req, res) => {
 // Admin Dashboard: Get statistics
 exports.dashboard = async (req, res) => {
   try {
-    const totalUsers = await prisma.user.count();
-    const totalMatches = await prisma.matches.count({
-      where: { isMutual: true } // ✅ only count mutual matches
-    });
+    const users = await prisma.user.findMany();
+    const totalUsers = users.length;
+    const verifiedUsers = users.filter(u => u.verified).length;
+    const unverifiedUsers = totalUsers - verifiedUsers;
+    const maleUsers = users.filter(u => u.gender === 'male').length;
+    const femaleUsers = users.filter(u => u.gender === 'female').length;
+
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    const newUsersThisWeek = users.filter(u => new Date(u.createdAt) >= weekAgo).length;
+
+    const totalMatches = await prisma.matches.count();
     const totalMessages = await prisma.message.count();
 
-    res.status(200).json({
+    res.json({
       totalUsers,
+      verifiedUsers,
+      unverifiedUsers,
+      maleUsers,
+      femaleUsers,
+      newUsersThisWeek,
       totalMatches,
       totalMessages
     });
   } catch (err) {
-    console.error('❌ Error fetching dashboard stats:', err);
-    res.status(500).json({ error: 'Failed to fetch dashboard stats' });
+    console.error('❌ Dashboard stats error:', err);
+    res.status(500).json({ error: 'Failed to fetch stats' });
   }
 };
 
@@ -91,3 +104,4 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ error: 'Failed to delete user' });
   }
 };
+
