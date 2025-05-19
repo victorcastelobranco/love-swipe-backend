@@ -7,6 +7,6 @@ const auth = require('../middleware/auth'); // ❌ Do not call it here
 router.get('/dashboard', auth(), adminController.dashboard);
 router.get('/users', auth(), adminController.listUsers);
 router.delete('/users/:id', auth(), adminController.deleteUser);
-router.get('/stats', auth(), adminController.getStatistics);
+
 
 module.exports = router;
