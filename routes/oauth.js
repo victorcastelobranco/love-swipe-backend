@@ -43,7 +43,10 @@ router.get('/google/callback',
       }
     });
 
-    const isProfileComplete = dbUser.birth && dbUser.gender && dbUser.username;
+    const isProfileComplete =
+    !!dbUser.birth &&
+    !!dbUser.gender &&
+    !!dbUser.username?.trim();
 
     // ✅ Send token + prefill info to frontend
     const finalRedirect = `http://localhost:8080/oauth-success?token=${token}&userId=${user.id}&profileComplete=${isProfileComplete}&username=${encodeURIComponent(dbUser.username || '')}&profilePicture=${encodeURIComponent(dbUser.profilePicture || '')}`;

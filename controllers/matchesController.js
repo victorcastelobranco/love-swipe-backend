@@ -13,35 +13,39 @@ exports.matchUser = async (req, res) => {
   }
 
   try {
-    // Count the number of matches today for the current user based on 'timestamp'
+    // ✅ Fetch current user's premium status
+    const currentUser = await prisma.user.findUnique({
+      where: { id: currentUserId },
+      select: { isPremium: true }
+    });
+
     const today = new Date();
-    today.setHours(0, 0, 0, 0);  // Set the time to midnight for accurate comparison
+    today.setHours(0, 0, 0, 0); // midnight
 
     const swipeCount = await prisma.matches.count({
       where: {
         user1Id: currentUserId,
         timestamp: {
-          gte: today  // Ensure we're counting only today's matches
+          gte: today
         }
       }
     });
 
-    console.log('Swipe count:', swipeCount);  // Log the swipe count
+    console.log('Swipe count:', swipeCount);
 
-    if (swipeCount >= 10) {
+    // ✅ Only enforce limit if not premium
+    if (!currentUser.isPremium && swipeCount >= 10) {
       return res.status(403).json({ error: 'Swipe limit reached for today.' });
     }
 
-    // Check if the liked user already liked the current user
     const existingLike = await prisma.matches.findFirst({
       where: {
-        user1Id: likedUserId,  // The user who liked the current user
-        user2Id: currentUserId // The current user who is being liked
+        user1Id: likedUserId,
+        user2Id: currentUserId
       }
     });
 
     if (existingLike) {
-      // It's a match!
       console.log('🎉 Match found!');
       await prisma.matches.update({
         where: { id: existingLike.id },
@@ -58,7 +62,6 @@ exports.matchUser = async (req, res) => {
 
       return res.status(200).json({ message: "🎉 It's a match!" });
     } else {
-      // Just store the like (not mutual yet)
       console.log('👍 Liked but no match yet');
       await prisma.matches.create({
         data: {
@@ -73,6 +76,49 @@ exports.matchUser = async (req, res) => {
   } catch (err) {
     console.error("❌ Error matching user:", err);
     res.status(500).json({ error: "Match failed" });
+  }
+};
+
+exports.skipUser = async (req, res) => {
+  const currentUserId = req.user.id;
+  const skippedUserId = parseInt(req.params.skippedUserId, 10);
+
+  if (!skippedUserId || skippedUserId === currentUserId) {
+    return res.status(400).json({ error: "Invalid skip target." });
+  }
+
+  try {
+    const currentUser = await prisma.user.findUnique({
+      where: { id: currentUserId },
+      select: { isPremium: true }
+    });
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const swipeCount = await prisma.matches.count({
+      where: {
+        user1Id: currentUserId,
+        timestamp: { gte: today }
+      }
+    });
+
+    if (!currentUser.isPremium && swipeCount >= 10) {
+      return res.status(403).json({ error: 'Swipe limit reached for today.' });
+    }
+
+    await prisma.matches.create({
+      data: {
+        user1Id: currentUserId,
+        user2Id: skippedUserId,
+        isMutual: false
+      }
+    });
+
+    res.status(200).json({ message: "User skipped." });
+  } catch (err) {
+    console.error("❌ Error skipping user:", err);
+    res.status(500).json({ error: "Skip failed." });
   }
 };
 

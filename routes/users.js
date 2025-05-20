@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
+console.log("🧪 DEBUG: userController.getMe =", userController.getMe);
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const auth = require('../middleware/auth');
+const auth = require('../middleware/auth'); //
+console.log("🧪 DEBUG: auth =", auth);
 const completeProfile = require('../middleware/completeProfile');
-
+console.log("🧪 DEBUG: completeProfile =", completeProfile);
 
 // Create a new user (signup)
 router.post('/signup', userController.signup);
@@ -34,9 +36,6 @@ router.get('/preference', auth(), userController.getUserByPreference);
 // ✅ Get a random user (if no prefs)
 router.get('/random', auth(), completeProfile, userController.getRandomUser);
 
-// 👇 LAST: Get user by ID — must be last or it will catch everything!
-router.get('/:id', auth(), completeProfile, userController.getUserById);
-
 // Upgrade to premium
 router.post('/upgrade', auth(), async (req, res) => {
   try {
@@ -50,5 +49,10 @@ router.post('/upgrade', auth(), async (req, res) => {
     res.status(500).json({ error: 'Upgrade failed' });
   }
 });
+
+
+// 👇 LAST: Get user by ID — must be last or it will catch everything!
+router.get('/:id', auth(), completeProfile, userController.getUserById);
+
 
 module.exports = router;

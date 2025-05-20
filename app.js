@@ -44,6 +44,8 @@ app.use('/api/auth', require('./routes/oauth'));
 app.use('/api', verifyRoutes);
 app.use('/api/block', require('./routes/block'));
 app.use('/api/password', passwordResetRoutes);
+app.use('/api/auth', require('./routes/auth'));
+
 
 //google oauth part
 app.use(session({

@@ -4,9 +4,19 @@ const prisma = new PrismaClient();
 
 // ➡️ Send a message
 exports.sendMessage = async (req, res) => {
-  const { receiverId, content } = req.body;
+  const receiverId = parseInt(req.params.receiverId);
+  const { content } = req.body;
   const senderId = req.user.id;
 
+  console.log('📨 senderId:', senderId);
+  console.log('📨 receiverId:', receiverId);
+  console.log('📨 content:', content);
+
+  if (!receiverId || !content) {
+    return res.status(400).json({ error: "Missing receiverId or content" });
+  }
+
+  try {
     const blocked = await prisma.block.findFirst({
       where: {
         OR: [
@@ -17,16 +27,10 @@ exports.sendMessage = async (req, res) => {
     });
 
     if (blocked) {
+      console.log('⛔ Blocked user, cannot send message');
       return res.status(403).json({ error: 'Messaging is blocked between these users.' });
     }
-  
 
-  if (!receiverId || !content) {
-    return res.status(400).json({ error: "Missing receiverId or content" });
-  }
-
-  try {
-    // ✅ Optional check: Only allow messaging if matched
     const match = await prisma.matches.findFirst({
       where: {
         isMutual: true,
@@ -38,6 +42,7 @@ exports.sendMessage = async (req, res) => {
     });
 
     if (!match) {
+      console.log('❌ Not matched');
       return res.status(403).json({ error: "You are not matched with this user." });
     }
 
@@ -49,6 +54,7 @@ exports.sendMessage = async (req, res) => {
       }
     });
 
+    console.log('✅ Message stored:', message);
     res.status(201).json({ message: "Message sent!", data: message });
   } catch (err) {
     console.error("❌ Error sending message:", err);

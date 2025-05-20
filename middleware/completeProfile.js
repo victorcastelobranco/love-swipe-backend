@@ -8,24 +8,21 @@ module.exports = async function (req, res, next) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
-        birth: true,
-        gender: true,
         username: true,
-        // optional fields can be selected too
-        bio: true,
-        interests: true,
-        location: true,
-        profilePicture: true
+        gender: true,
+        birth: true
       }
     });
 
-    if (!user || !user.birth || !user.gender || !user.username?.trim()) {
+    console.log('🧠 Profile check:', user);
+
+    if (!user || !user.username?.trim() || !user.gender || !user.birth) {
       return res.status(403).json({ error: 'Profile is incomplete. Please update your profile.' });
     }
 
     next();
   } catch (err) {
-    console.error('❌ Profile check failed:', err);
-    res.status(500).json({ error: 'Failed to verify profile completeness.' });
+    console.error('❌ completeProfile error:', err);
+    res.status(500).json({ error: 'Profile check failed.' });
   }
 };

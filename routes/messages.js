@@ -5,7 +5,7 @@ const completeProfile = require('../middleware/completeProfile');
 const messagesController = require('../controllers/messagesController');
 
 // 🔥 Send a message (only if profile is complete)
-router.post('/', auth(), completeProfile, messagesController.sendMessage);
+router.post('/:receiverId', auth(), completeProfile, messagesController.sendMessage);
 
 // 🔥 Get chat messages
 router.get('/:userId', auth(), completeProfile, messagesController.getMessages);

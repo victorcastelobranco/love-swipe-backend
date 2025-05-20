@@ -133,7 +133,16 @@ exports.login = async (req, res) => {
       { expiresIn: process.env.JWT_EXPIRES_IN }
     );
 
-    res.status(200).json({ message: "User login successful", token, user });
+    // Explicitly add role here in the returned user object
+    return res.status(200).json({
+      message: "User login successful",
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        role: "user"
+      }
+    });
   } catch (err) {
     console.error('❌ Login error:', err);
     res.status(500).json({ error: "Server error during login" });
@@ -183,19 +192,34 @@ exports.updateProfile = async (req, res) => {
     const currentUser = await prisma.user.findUnique({ where: { id: userId } });
     if (!currentUser) return res.status(404).json({ error: "User not found" });
 
-    const pictures = Array.isArray(updates.profilePictures)
-      ? updates.profilePictures.filter(p => p && typeof p === 'string' && p.trim() !== '')
+    // ✅ Normalize pictures
+    let pictures = Array.isArray(updates.pictures)
+      ? updates.pictures.filter(p => typeof p === 'string' && p.trim() !== '')
       : JSON.parse(currentUser.profilePictures || '[]');
+
+    // ✅ Enforce picture limit
+    const maxAllowed = currentUser.isPremium ? 5 : 1;
+    if (pictures.length > maxAllowed) {
+      return res.status(400).json({ error: `You can upload up to ${maxAllowed} picture${maxAllowed > 1 ? 's' : ''}.` });
+    }
+
+    // ✅ Normalize interests
+    let cleanedInterests = currentUser.interests;
+    if (Array.isArray(updates.interests)) {
+      cleanedInterests = updates.interests.map(tag => tag.trim()).filter(Boolean);
+    } else if (typeof updates.interests === 'string') {
+      cleanedInterests = updates.interests.split(',').map(tag => tag.trim()).filter(Boolean);
+    }
 
     const dataToUpdate = {
       username: updates.username?.trim() || currentUser.username,
-      profilePicture: updates.profilePicture?.trim() || currentUser.profilePicture,
+      profilePicture: pictures.length > 0 ? pictures[0] : currentUser.profilePicture,
       profilePictures: JSON.stringify(pictures),
-      birth: updates.birth ? new Date(updates.birth) : currentUser.birth,
       gender: updates.gender || currentUser.gender,
       bio: updates.bio?.trim() || currentUser.bio,
-      interests: updates.interests?.trim() || currentUser.interests,
-      location: updates.location?.trim() || currentUser.location
+      interests: cleanedInterests.length > 0 ? cleanedInterests.join(', ') : currentUser.interests,
+      location: updates.location?.trim() || currentUser.location,
+      birth: updates.birth ? new Date(updates.birth) : currentUser.birth
     };
 
     const updatedUser = await prisma.user.update({
@@ -471,4 +495,17 @@ exports.getPreferences = async (req, res) => {
     console.error("❌ Failed to fetch preferences:", err);
     res.status(500).json({ error: "Could not load preferences." });
   }
+};
+
+module.exports = {
+  signup: exports.signup,
+  login: exports.login,
+  getMe: exports.getMe,
+  updateProfile: exports.updateProfile,
+  changePassword: exports.changePassword,
+  updatePreferences: exports.updatePreferences,
+  getPreferences: exports.getPreferences,
+  getUserByPreference: exports.getUserByPreference,
+  getRandomUser: exports.getRandomUser,
+  getUserById: exports.getUserById
 };
