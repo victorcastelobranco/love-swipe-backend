@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 14, 2025 at 07:27 PM
+-- Generation Time: May 21, 2025 at 03:33 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -40,6 +40,27 @@ CREATE TABLE `admin` (
 
 INSERT INTO `admin` (`id`, `email`, `password`, `timestamp`) VALUES
 (2, 'admin@gmail.com', '$2b$10$EI3/UbKLWM4wqfkF2olU1upOdlI2lp2G1oVbo3F/CQ2wxNum.3pFq', '2025-04-28 06:48:20');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `block`
+--
+
+CREATE TABLE `block` (
+  `id` int(11) NOT NULL,
+  `blockerId` int(11) NOT NULL,
+  `blockedId` int(11) NOT NULL,
+  `createdAt` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `block`
+--
+
+INSERT INTO `block` (`id`, `blockerId`, `blockedId`, `createdAt`) VALUES
+(3, 47, 10, '2025-05-20 17:02:06'),
+(5, 9, 18, '2025-05-20 17:25:10');
 
 -- --------------------------------------------------------
 
@@ -104,7 +125,7 @@ INSERT INTO `matches` (`id`, `user1Id`, `user2Id`, `isMutual`, `timestamp`) VALU
 (62, 18, 11, 0, '2025-05-03 07:51:18'),
 (63, 18, 14, 0, '2025-05-03 07:51:19'),
 (64, 18, 12, 0, '2025-05-03 07:51:21'),
-(65, 18, 16, 0, '2025-05-03 07:51:22'),
+(65, 18, 16, 1, '2025-05-03 07:51:22'),
 (66, 18, 10, 1, '2025-05-03 07:51:23'),
 (67, 18, 17, 0, '2025-05-03 07:51:24'),
 (68, 18, 9, 0, '2025-05-03 07:51:25'),
@@ -114,59 +135,94 @@ INSERT INTO `matches` (`id`, `user1Id`, `user2Id`, `isMutual`, `timestamp`) VALU
 (72, 19, 10, 1, '2025-05-03 07:58:45'),
 (73, 19, 15, 0, '2025-05-03 07:58:46'),
 (74, 19, 11, 0, '2025-05-03 07:58:49'),
-(75, 19, 9, 0, '2025-05-03 07:58:51'),
+(75, 19, 9, 1, '2025-05-03 07:58:51'),
 (76, 19, 18, 1, '2025-05-03 07:58:52'),
 (77, 19, 17, 0, '2025-05-03 07:58:53'),
 (78, 19, 16, 0, '2025-05-03 07:58:53'),
-(83, 39, 21, 0, '2025-05-12 11:56:28'),
-(84, 39, 12, 0, '2025-05-12 11:56:29'),
-(85, 39, 16, 0, '2025-05-12 11:56:30'),
-(86, 39, 10, 1, '2025-05-12 11:56:31'),
-(87, 39, 15, 0, '2025-05-12 11:56:56'),
-(88, 39, 19, 0, '2025-05-12 11:56:57'),
-(89, 39, 17, 0, '2025-05-12 11:56:59'),
-(90, 39, 11, 0, '2025-05-12 11:57:00'),
-(91, 39, 14, 0, '2025-05-12 11:57:01'),
-(92, 39, 18, 1, '2025-05-12 11:57:01'),
-(93, 39, 9, 0, '2025-05-12 11:57:03'),
-(94, 10, 40, 0, '2025-05-13 11:58:52'),
-(95, 10, 40, 0, '2025-05-13 11:58:53'),
 (96, 10, 21, 0, '2025-05-13 11:59:47'),
 (97, 10, 21, 0, '2025-05-13 12:45:32'),
-(98, 9, 40, 0, '2025-05-13 12:45:52'),
 (99, 9, 21, 0, '2025-05-13 12:45:55'),
-(100, 18, 40, 0, '2025-05-13 13:10:26'),
 (101, 18, 21, 0, '2025-05-13 13:10:27'),
-(102, 18, 39, 1, '2025-05-13 13:10:29'),
 (103, 18, 19, 1, '2025-05-13 13:10:34'),
 (104, 10, 19, 1, '2025-05-13 13:13:12'),
-(105, 10, 39, 1, '2025-05-13 13:13:14'),
 (106, 10, 18, 1, '2025-05-13 13:13:16'),
-(107, 39, 40, 0, '2025-05-13 13:16:17'),
 (108, 41, 12, 0, '2025-05-13 13:30:29'),
 (109, 41, 19, 0, '2025-05-13 13:30:30'),
 (110, 41, 11, 0, '2025-05-13 13:30:32'),
 (111, 41, 17, 0, '2025-05-13 13:30:32'),
-(112, 41, 9, 0, '2025-05-13 13:30:34'),
+(112, 41, 9, 1, '2025-05-13 13:30:34'),
 (113, 41, 18, 0, '2025-05-13 13:30:35'),
-(114, 41, 39, 0, '2025-05-13 13:30:38'),
 (115, 41, 14, 0, '2025-05-13 13:30:42'),
 (116, 41, 10, 1, '2025-05-13 13:38:27'),
-(117, 41, 40, 0, '2025-05-13 13:38:28'),
 (118, 10, 41, 1, '2025-05-14 08:57:11'),
 (119, 42, 17, 0, '2025-05-14 09:31:11'),
 (120, 42, 41, 0, '2025-05-14 09:31:13'),
-(121, 42, 40, 0, '2025-05-14 09:31:16'),
 (122, 42, 19, 0, '2025-05-14 09:31:18'),
 (123, 42, 16, 0, '2025-05-14 09:33:28'),
-(124, 42, 39, 0, '2025-05-14 09:43:20'),
 (125, 42, 14, 0, '2025-05-14 09:47:06'),
-(126, 42, 9, 0, '2025-05-14 09:47:08'),
+(126, 42, 9, 1, '2025-05-14 09:47:08'),
 (127, 42, 18, 0, '2025-05-14 09:53:14'),
 (128, 42, 11, 0, '2025-05-14 09:59:22'),
-(129, 43, 10, 0, '2025-05-14 10:12:59'),
+(129, 43, 10, 1, '2025-05-14 10:12:59'),
 (130, 43, 12, 0, '2025-05-14 10:13:02'),
-(131, 43, 11, 0, '2025-05-14 10:13:03');
+(131, 43, 11, 0, '2025-05-14 10:13:03'),
+(132, 46, 11, 0, '2025-05-16 11:06:47'),
+(133, 46, 41, 0, '2025-05-16 11:06:49'),
+(134, 46, 10, 1, '2025-05-16 11:06:50'),
+(135, 47, 11, 0, '2025-05-16 11:17:15'),
+(136, 47, 43, 0, '2025-05-16 11:17:23'),
+(137, 47, 18, 0, '2025-05-16 11:17:26'),
+(138, 47, 10, 1, '2025-05-16 11:17:27'),
+(139, 47, 15, 0, '2025-05-16 11:17:29'),
+(140, 47, 17, 0, '2025-05-16 11:17:30'),
+(141, 47, 44, 0, '2025-05-16 11:17:31'),
+(142, 47, 12, 0, '2025-05-16 11:17:32'),
+(143, 47, 42, 0, '2025-05-16 11:17:34'),
+(144, 47, 9, 1, '2025-05-16 11:17:35'),
+(145, 10, 16, 1, '2025-05-16 11:52:51'),
+(146, 10, 43, 1, '2025-05-16 11:52:54'),
+(147, 10, 44, 0, '2025-05-16 11:53:01'),
+(148, 10, 47, 1, '2025-05-16 11:53:03'),
+(149, 10, 42, 0, '2025-05-16 11:53:06'),
+(150, 10, 46, 1, '2025-05-16 11:53:07'),
+(151, 10, 46, 1, '2025-05-16 13:22:41'),
+(152, 9, 42, 1, '2025-05-20 15:28:44'),
+(153, 9, 41, 1, '2025-05-20 15:28:52'),
+(154, 9, 48, 0, '2025-05-20 15:28:59'),
+(155, 9, 43, 0, '2025-05-20 15:29:01'),
+(156, 9, 49, 0, '2025-05-20 15:29:02'),
+(157, 9, 47, 1, '2025-05-20 15:29:03'),
+(158, 9, 44, 0, '2025-05-20 15:29:09'),
+(159, 9, 46, 0, '2025-05-20 15:29:24'),
+(160, 9, 19, 1, '2025-05-20 15:30:37'),
+(161, 49, 46, 0, '2025-05-20 15:39:59'),
+(162, 49, 42, 0, '2025-05-20 15:40:01'),
+(163, 49, 12, 0, '2025-05-20 15:40:03'),
+(164, 49, 47, 0, '2025-05-20 15:40:03'),
+(165, 49, 11, 0, '2025-05-20 15:40:04'),
+(166, 49, 17, 0, '2025-05-20 15:40:05'),
+(167, 49, 14, 0, '2025-05-20 15:40:06'),
+(168, 49, 15, 0, '2025-05-20 15:40:07'),
+(169, 49, 18, 0, '2025-05-20 15:40:08'),
+(170, 49, 10, 0, '2025-05-20 15:40:10'),
+(171, 49, 21, 0, '2025-05-20 16:56:53'),
+(172, 49, 44, 0, '2025-05-20 16:56:58'),
+(173, 49, 48, 0, '2025-05-20 16:56:59'),
+(174, 49, 19, 0, '2025-05-20 17:00:29'),
+(175, 49, 43, 0, '2025-05-20 17:00:32'),
+(176, 49, 9, 0, '2025-05-20 17:00:36'),
+(177, 49, 16, 0, '2025-05-20 17:00:38'),
+(178, 49, 41, 0, '2025-05-20 17:00:40'),
+(179, 16, 47, 0, '2025-05-20 17:09:54'),
+(180, 16, 48, 0, '2025-05-20 17:09:56'),
+(181, 16, 18, 1, '2025-05-20 17:09:57'),
+(182, 16, 19, 0, '2025-05-20 17:10:01'),
+(183, 16, 46, 0, '2025-05-20 17:10:02'),
+(184, 16, 42, 0, '2025-05-20 17:10:03'),
+(185, 16, 41, 0, '2025-05-20 17:10:04'),
+(186, 16, 21, 0, '2025-05-20 17:10:06'),
+(187, 16, 43, 0, '2025-05-20 17:10:07'),
+(188, 16, 44, 0, '2025-05-20 17:10:08');
 
 -- --------------------------------------------------------
 
@@ -205,9 +261,30 @@ INSERT INTO `message` (`id`, `senderId`, `receiverId`, `content`, `createdAt`) V
 (17, 9, 10, 'teste', '2025-05-08 13:51:41'),
 (18, 10, 9, 'ola', '2025-05-11 14:33:09'),
 (19, 10, 9, 'teste', '2025-05-13 14:29:43'),
-(20, 10, 39, 'ola', '2025-05-14 10:54:18'),
-(21, 10, 39, 'como vai?', '2025-05-14 10:54:21'),
-(22, 10, 39, 'teste aqui', '2025-05-14 10:54:24');
+(23, 9, 10, 'linda', '2025-05-16 14:56:35'),
+(24, 9, 10, 'delicia', '2025-05-16 14:56:36'),
+(25, 17, 9, 'hello', '2025-05-16 16:17:50'),
+(26, 17, 10, 'teste', '2025-05-19 23:38:04'),
+(27, 17, 10, 'what', '2025-05-19 23:38:11'),
+(28, 17, 10, 'eu', '2025-05-19 23:41:31'),
+(29, 17, 10, 'teste', '2025-05-19 23:41:33'),
+(30, 10, 17, 'eu sou a mulher', '2025-05-19 23:42:17'),
+(31, 47, 10, 'linda', '2025-05-20 16:59:53'),
+(32, 9, 17, 'ei', '2025-05-20 17:09:08');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `passwordresettoken`
+--
+
+CREATE TABLE `passwordresettoken` (
+  `id` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `expiresAt` datetime NOT NULL,
+  `createdAt` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -241,17 +318,20 @@ INSERT INTO `user` (`id`, `username`, `email`, `password`, `bio`, `birth`, `gend
 (11, 'chelsea', 'chelsea@gmail.com', '$2b$10$./qVEqCfAFL6rvBHPPjkuOVk8WH3/EpXMxwOM1JiGhY7isFD9ZFmG', NULL, '2000-05-25', 'male', NULL, NULL, 'https://thumbs.dreamstime.com/b/chelsea-f-c-87278714.jpg', NULL, 0, 0),
 (12, 'chelsea1', 'chelsea1@gmail.com', '$2b$10$8OUxWYozCpkrvOulhudRYOsIT0j8yZdGmzYgpFO39vMbeMyHGTV/K', NULL, '2004-06-24', 'male', NULL, NULL, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMYMJ_86ctK0IoiS2WOYcZslFE08V0WLQgoA&s', NULL, 0, 0),
 (14, 'soad', 'soad@gmail.com', '$2b$10$MoB7nnPLUVrovOdFZsk/QuJHjI5.Qg9tTxZ8siJ9N3x5Q/59yDna.', NULL, '2007-04-04', 'male', NULL, NULL, '', NULL, 0, 0),
-(15, 'lp', 'lp@gmail.com', '$2b$10$IqnidtZTHySwYtF.76wa0.muB0gXJuwleXql1FnzXDUcQYYxldAzW', NULL, '2007-04-28', 'male', NULL, NULL, '', NULL, 0, 0),
+(15, 'lp', 'lp@gmail.com', '$2b$10$IqnidtZTHySwYtF.76wa0.muB0gXJuwleXql1FnzXDUcQYYxldAzW', NULL, '2007-04-28', 'male', NULL, NULL, 'https://seeklogo.com/images/L/linkin-park-logo-423D2A8866-seeklogo.com.png', '[\"https://seeklogo.com/images/L/linkin-park-logo-423D2A8866-seeklogo.com.png\"]', 0, 0),
 (16, 'bolsonaro', 'boslonaro@gmail.com', '$2b$10$Ye8t49GxQ2NJqtlEbqZVg.pm6mSe/w6EVM.aTQOApTGIm/Fp8vE7S', NULL, '2007-03-08', 'male', NULL, NULL, '', NULL, 0, 0),
 (17, 'lula', 'lula@gmail.com', '$2b$10$WvhUXnWN8cNQwsCpG.7SX.KcfXxjVTL6KCVU9jRY2FiAgffMhIvQO', NULL, '2007-02-15', 'male', NULL, NULL, '', NULL, 0, 0),
 (18, 'random', 'random@gmail.com', '$2b$10$0Xt4kCfN2o55gbO21gJ5wuBLNzzbZ/3LTOMTsuF/fX3WUW7orTW8K', NULL, '2007-05-03', 'male', NULL, NULL, '', NULL, 0, 0),
 (19, 'random1', 'random1@gmail.com', '$2b$10$FWhn9rCTjCOtjWCVi55x8.aw9fX5nthsSeeMhnxw7yl0Vkrhbddw.', NULL, '2007-05-02', 'male', NULL, NULL, '', NULL, 0, 0),
 (21, 'verificar', 'verifcar@gmail.com', '$2b$10$6v3JHOCuDmhh8HsZCCFG5eH5pN4IOivcK3Eg3CGeKp/AZ0zJWo1ba', NULL, '2007-04-30', 'male', NULL, NULL, NULL, NULL, 0, 0),
-(39, 'Swipe Test', 'swipetestweb@gmail.com', '', 'teste', '2007-05-09', 'male', 'aq', 'asa', 'https://lh3.googleusercontent.com/a/ACg8ocKnr0Rh7F4ViaQwOcYTKJdey_zLSONW8gZ9rnD8WZqm2mB0gfY=s96-c', '[]', 1, 0),
-(40, 'PORRA', 'porraloveswipe@gmail.com', '', NULL, '2007-05-02', 'male', NULL, NULL, 'https://lh3.googleusercontent.com/a/ACg8ocL1z9ARbxL9bXO8pSlB6u4OpZ844dT7bJ_3hg4UJQP0CnnIjw=s96-c', NULL, 1, 0),
 (41, 'xandao', 'super@gmail.com', '$2b$10$dH0LwG02MO347TzRYItVZuueIoEN40.n/RQQ7DAaLte13uoaR0bPK', NULL, '2007-05-02', 'female', NULL, NULL, '', '[]', 0, 0),
 (42, 'preference', 'preference@gmail.com', '$2b$10$mZy/wGo6ymgUaXXC1oBCROJ4o0trO3VAoB3CdtSsk5eh9StslKQfe', NULL, '2007-05-12', 'male', NULL, NULL, '', '[]', 0, 0),
-(43, 'vk', 'victorkratos@gmail.com', '$2b$10$flH98cfF3jqGpZ3f.RD6Ium/FTddpleEcqX9ib7MbXehg2vAewmGC', NULL, '2007-05-03', 'Male', NULL, NULL, '', '[]', 0, 0);
+(43, 'vk', 'victorkratos@gmail.com', '$2b$10$flH98cfF3jqGpZ3f.RD6Ium/FTddpleEcqX9ib7MbXehg2vAewmGC', NULL, '2007-05-03', 'Male', NULL, NULL, '', '[]', 0, 0),
+(44, 'teste oficial', 'swipetestweb@gmail.com', '$2b$10$9n3FR9onhA.A7usoDO5gtekAkZNu1C1754fHR6KDpGLBKO2Ww2ar2', NULL, '2007-05-10', 'Male', NULL, NULL, '', '[]', 0, 0),
+(46, 'teste oficial', 'testeoficial818@gmail.com', '$2b$10$XkE5SqNURzT0sFkmYH7Et.s5jjYELLaAjNZ8pWEeneXsnxgMrCKfS', NULL, '2007-05-11', 'male', NULL, NULL, '', '[]', 1, 0),
+(47, 'token teste', 'afmsnmaldito@hotmail.com', '$2b$10$prKPRI2wa0kv.ZOKd0NFGO.NAceRBGtxORI74eqajrFOah92buFg.', NULL, '2007-05-10', 'Male', NULL, NULL, '', '[]', 1, 1),
+(48, 'kevin', 'kevin@gmail.com', '$2b$10$c6d1gJtPincCltzy9lPXLutePc5Nh1glaJeLX/tXVtkOVrdbI.Wwi', NULL, '2005-06-17', 'male', NULL, NULL, '', '[]', 0, 0),
+(49, 'PORRA', 'porraloveswipe@gmail.com', '', 'Teste oficial', '2007-05-10', 'female', 'Antwerp', 'Gaming', 'https://i.pinimg.com/474x/fb/c3/6d/fbc36d17c4e8ccc9e2653e6a02d41a10.jpg', '[\"https://i.pinimg.com/474x/fb/c3/6d/fbc36d17c4e8ccc9e2653e6a02d41a10.jpg\",\"https://ih1.redbubble.net/image.4246722393.2975/raf,750x1000,075,t,FFFFFF:97ab1c12de.jpg\",\"https://i.kym-cdn.com/photos/images/newsfeed/001/937/655/73c.jpg\",\"https://i.kym-cdn.com/photos/images/newsfeed/001/909/127/bb2.png\",\"https://i.kym-cdn.com/photos/images/newsfeed/001/909/126/29a.png\"]', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -273,12 +353,12 @@ CREATE TABLE `userpreferences` (
 --
 
 INSERT INTO `userpreferences` (`id`, `userId`, `preferredGender`, `preferredLocation`, `minAge`, `maxAge`) VALUES
-(1, 10, '', '', NULL, NULL),
+(1, 10, 'Male', 'Antwerp', NULL, NULL),
 (2, 11, 'Male', '', NULL, NULL),
 (3, 12, 'Female', '', NULL, NULL),
-(4, 39, 'Female', '', NULL, NULL),
 (5, 42, 'Female', NULL, NULL, NULL),
-(6, 43, 'Male', NULL, NULL, 20);
+(6, 43, 'Male', NULL, NULL, 20),
+(7, 46, 'Female', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -295,6 +375,13 @@ CREATE TABLE `verificationtoken` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
+-- Dumping data for table `verificationtoken`
+--
+
+INSERT INTO `verificationtoken` (`id`, `token`, `userId`, `createdAt`, `expiresAt`) VALUES
+(12, 'ae14898f-0986-4c16-9765-e639f1e52472', 48, '2025-05-20 00:42:57', '2025-05-20 01:42:57');
+
+--
 -- Indexes for dumped tables
 --
 
@@ -304,6 +391,14 @@ CREATE TABLE `verificationtoken` (
 ALTER TABLE `admin`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `admin_email` (`email`);
+
+--
+-- Indexes for table `block`
+--
+ALTER TABLE `block`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_block_pair` (`blockerId`,`blockedId`),
+  ADD KEY `fk_block_blocked` (`blockedId`);
 
 --
 -- Indexes for table `matches`
@@ -322,13 +417,20 @@ ALTER TABLE `message`
   ADD KEY `receiverId` (`receiverId`);
 
 --
+-- Indexes for table `passwordresettoken`
+--
+ALTER TABLE `passwordresettoken`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `token` (`token`),
+  ADD KEY `userId` (`userId`);
+
+--
 -- Indexes for table `user`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `username` (`username`),
   ADD UNIQUE KEY `user_email` (`email`),
-  ADD UNIQUE KEY `user_username` (`username`);
+  ADD UNIQUE KEY `email` (`email`);
 
 --
 -- Indexes for table `userpreferences`
@@ -356,38 +458,57 @@ ALTER TABLE `admin`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `block`
+--
+ALTER TABLE `block`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT for table `matches`
 --
 ALTER TABLE `matches`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=132;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=189;
 
 --
 -- AUTO_INCREMENT for table `message`
 --
 ALTER TABLE `message`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+
+--
+-- AUTO_INCREMENT for table `passwordresettoken`
+--
+ALTER TABLE `passwordresettoken`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `userpreferences`
 --
 ALTER TABLE `userpreferences`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `verificationtoken`
 --
 ALTER TABLE `verificationtoken`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `block`
+--
+ALTER TABLE `block`
+  ADD CONSTRAINT `fk_block_blocked` FOREIGN KEY (`blockedId`) REFERENCES `user` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_block_blocker` FOREIGN KEY (`blockerId`) REFERENCES `user` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `matches`
@@ -402,6 +523,12 @@ ALTER TABLE `matches`
 ALTER TABLE `message`
   ADD CONSTRAINT `message_ibfk_1` FOREIGN KEY (`senderId`) REFERENCES `user` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `message_ibfk_2` FOREIGN KEY (`receiverId`) REFERENCES `user` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `passwordresettoken`
+--
+ALTER TABLE `passwordresettoken`
+  ADD CONSTRAINT `passwordresettoken_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `userpreferences`
