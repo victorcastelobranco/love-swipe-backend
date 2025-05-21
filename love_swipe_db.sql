@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 21, 2025 at 03:33 AM
+-- Generation Time: May 21, 2025 at 09:50 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -222,7 +222,15 @@ INSERT INTO `matches` (`id`, `user1Id`, `user2Id`, `isMutual`, `timestamp`) VALU
 (185, 16, 41, 0, '2025-05-20 17:10:04'),
 (186, 16, 21, 0, '2025-05-20 17:10:06'),
 (187, 16, 43, 0, '2025-05-20 17:10:07'),
-(188, 16, 44, 0, '2025-05-20 17:10:08');
+(188, 16, 44, 0, '2025-05-20 17:10:08'),
+(189, 50, 48, 0, '2025-05-21 16:30:34'),
+(190, 50, 49, 0, '2025-05-21 17:31:20'),
+(191, 50, 11, 0, '2025-05-21 17:34:46'),
+(192, 50, 16, 0, '2025-05-21 17:34:47'),
+(193, 50, 14, 0, '2025-05-21 17:34:49'),
+(194, 50, 10, 0, '2025-05-21 17:37:34'),
+(195, 50, 42, 0, '2025-05-21 17:37:36'),
+(196, 50, 9, 0, '2025-05-21 17:46:52');
 
 -- --------------------------------------------------------
 
@@ -331,7 +339,8 @@ INSERT INTO `user` (`id`, `username`, `email`, `password`, `bio`, `birth`, `gend
 (46, 'teste oficial', 'testeoficial818@gmail.com', '$2b$10$XkE5SqNURzT0sFkmYH7Et.s5jjYELLaAjNZ8pWEeneXsnxgMrCKfS', NULL, '2007-05-11', 'male', NULL, NULL, '', '[]', 1, 0),
 (47, 'token teste', 'afmsnmaldito@hotmail.com', '$2b$10$prKPRI2wa0kv.ZOKd0NFGO.NAceRBGtxORI74eqajrFOah92buFg.', NULL, '2007-05-10', 'Male', NULL, NULL, '', '[]', 1, 1),
 (48, 'kevin', 'kevin@gmail.com', '$2b$10$c6d1gJtPincCltzy9lPXLutePc5Nh1glaJeLX/tXVtkOVrdbI.Wwi', NULL, '2005-06-17', 'male', NULL, NULL, '', '[]', 0, 0),
-(49, 'PORRA', 'porraloveswipe@gmail.com', '', 'Teste oficial', '2007-05-10', 'female', 'Antwerp', 'Gaming', 'https://i.pinimg.com/474x/fb/c3/6d/fbc36d17c4e8ccc9e2653e6a02d41a10.jpg', '[\"https://i.pinimg.com/474x/fb/c3/6d/fbc36d17c4e8ccc9e2653e6a02d41a10.jpg\",\"https://ih1.redbubble.net/image.4246722393.2975/raf,750x1000,075,t,FFFFFF:97ab1c12de.jpg\",\"https://i.kym-cdn.com/photos/images/newsfeed/001/937/655/73c.jpg\",\"https://i.kym-cdn.com/photos/images/newsfeed/001/909/127/bb2.png\",\"https://i.kym-cdn.com/photos/images/newsfeed/001/909/126/29a.png\"]', 1, 1);
+(49, 'PORRA', 'porraloveswipe@gmail.com', '', 'Teste oficial', '2007-05-10', 'male', 'Antwerp', 'eating, sleeping', 'https://i.pinimg.com/474x/fb/c3/6d/fbc36d17c4e8ccc9e2653e6a02d41a10.jpg', '[]', 1, 1),
+(50, 'teste preferencia', 'testepreferencia@gmail.com', '$2b$10$bIGPVeKcSkkUAsrkaA5i8Ocz3ra21M11VtgbDeJyDru8a11qrW/ui', NULL, '1957-06-22', 'male', NULL, NULL, '', '[]', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -358,7 +367,8 @@ INSERT INTO `userpreferences` (`id`, `userId`, `preferredGender`, `preferredLoca
 (3, 12, 'Female', '', NULL, NULL),
 (5, 42, 'Female', NULL, NULL, NULL),
 (6, 43, 'Male', NULL, NULL, 20),
-(7, 46, 'Female', NULL, NULL, NULL);
+(7, 46, 'Female', NULL, NULL, NULL),
+(8, 50, NULL, 'Bruges', 18, NULL);
 
 -- --------------------------------------------------------
 
@@ -379,7 +389,8 @@ CREATE TABLE `verificationtoken` (
 --
 
 INSERT INTO `verificationtoken` (`id`, `token`, `userId`, `createdAt`, `expiresAt`) VALUES
-(12, 'ae14898f-0986-4c16-9765-e639f1e52472', 48, '2025-05-20 00:42:57', '2025-05-20 01:42:57');
+(12, 'ae14898f-0986-4c16-9765-e639f1e52472', 48, '2025-05-20 00:42:57', '2025-05-20 01:42:57'),
+(13, 'c53a6b1c-d670-4c79-aa8a-24d05f6039a3', 50, '2025-05-21 17:21:48', '2025-05-21 18:21:48');
 
 --
 -- Indexes for dumped tables
@@ -467,7 +478,7 @@ ALTER TABLE `block`
 -- AUTO_INCREMENT for table `matches`
 --
 ALTER TABLE `matches`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=189;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=197;
 
 --
 -- AUTO_INCREMENT for table `message`
@@ -485,19 +496,19 @@ ALTER TABLE `passwordresettoken`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT for table `userpreferences`
 --
 ALTER TABLE `userpreferences`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `verificationtoken`
 --
 ALTER TABLE `verificationtoken`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- Constraints for dumped tables
