@@ -402,8 +402,13 @@ exports.getUserByPreference = async (req, res) => {
     });
 
     if (!preferences) {
-      console.warn("⚠️ No preferences found for user:", currentUserId);
-      return res.status(400).json({ error: "Preferences not found." });
+      console.log("🟡 No preferences found — applying default values");
+      preferences = {
+        preferredGender: null,
+        minAge: null,
+        maxAge: null,
+        preferredLocation: null
+      };
     }
 
     const today = new Date();
@@ -417,6 +422,7 @@ exports.getUserByPreference = async (req, res) => {
 
     const conditions = [`id != ${currentUserId}`];
 
+    // Exclude matched users
     conditions.push(`
       id NOT IN (
         SELECT user2Id FROM matches WHERE user1Id = ${currentUserId}
@@ -436,32 +442,32 @@ exports.getUserByPreference = async (req, res) => {
       )
     `);
 
+    // Gender filter
     if (preferences.preferredGender) {
-      const gender = preferences.preferredGender.toLowerCase();
+      const gender = preferences.preferredGender.toLowerCase().replace(/'/g, "''");
       conditions.push(`LOWER(gender) = '${gender}'`);
     }
 
+    // Age filter (birth date)
     if (minBirth && maxBirth) {
       conditions.push(`birth BETWEEN '${minBirth.toISOString()}' AND '${maxBirth.toISOString()}'`);
     }
 
+    // Location filter using partial match
     if (preferences.preferredLocation) {
-      const location = preferences.preferredLocation.toLowerCase();
-      conditions.push(`LOWER(location) = '${location}'`);
+      const location = preferences.preferredLocation.toLowerCase().replace(/'/g, "''");
+      conditions.push(`LOWER(location) LIKE '%${location}%'`);
     }
 
+    // Assemble query
     const query = `
       SELECT * FROM user
       WHERE ${conditions.join(' AND ')}
       ORDER BY RAND()
-      LIMIT 1
-      AND id NOT IN (
-      SELECT blockedId FROM block WHERE blockerId = ${currentUserId}
-      UNION
-      SELECT bloc
+      LIMIT 1;
     `;
 
-    console.log("🧪 Executing SQL query:\n", query);
+    console.log("🧪 Final SQL query:\n", query);
 
     const users = await prisma.$queryRawUnsafe(query);
 
