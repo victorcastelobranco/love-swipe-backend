@@ -49,7 +49,7 @@ model user {
   birth                            DateTime?            @db.Date
   gender                           String?              @db.VarChar(10)
   location                         String?              @db.VarChar(100)
-  interests                        String?              @db.VarChar(255)
+  interests                        Json?                
   profilePicture                   String?              @db.Text
   profilePictures                  String?              @db.LongText
   verified                         Boolean?             @default(false)

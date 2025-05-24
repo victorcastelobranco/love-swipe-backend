@@ -217,7 +217,7 @@ exports.updateProfile = async (req, res) => {
       profilePictures: JSON.stringify(pictures),
       gender: updates.gender || currentUser.gender,
       bio: updates.bio?.trim() || currentUser.bio,
-      interests: cleanedInterests.length > 0 ? cleanedInterests.join(', ') : currentUser.interests,
+      interests: cleanedInterests.length > 0 ? cleanedInterests : null, // ✅ send as array or null
       location: updates.location?.trim() || currentUser.location,
       birth: updates.birth ? new Date(updates.birth) : currentUser.birth
     };
