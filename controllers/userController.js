@@ -358,7 +358,7 @@ exports.changePassword = async (req, res) => {
 
 exports.updatePreferences = async (req, res) => {
   const userId = req.user.id;
-  let { preferredGender, minAge, maxAge, preferredLocation } = req.body;
+  let { preferredGender, minAge, maxAge, preferredLocation, preferredInterests } = req.body;
 
   // 🧼 Sanitize and convert input
   minAge = isNaN(parseInt(minAge)) ? null : parseInt(minAge);
@@ -373,14 +373,16 @@ exports.updatePreferences = async (req, res) => {
         preferredGender,
         minAge,
         maxAge,
-        preferredLocation
+        preferredLocation,
+        preferredInterests
       },
       create: {
         userId,
         preferredGender,
         minAge,
         maxAge,
-        preferredLocation
+        preferredLocation,
+        preferredInterests
       }
     });
 
@@ -403,20 +405,14 @@ exports.getUserByPreference = async (req, res) => {
 
     if (!preferences) {
       console.log("🟡 No preferences found — applying default values");
-      preferences = {
-        preferredGender: null,
-        minAge: null,
-        maxAge: null,
-        preferredLocation: null
-      };
     }
 
     const today = new Date();
-    const minBirth = preferences.maxAge
+    const minBirth = preferences?.maxAge
       ? new Date(today.getFullYear() - preferences.maxAge, today.getMonth(), today.getDate())
       : null;
 
-    const maxBirth = preferences.minAge
+    const maxBirth = preferences?.minAge
       ? new Date(today.getFullYear() - preferences.minAge, today.getMonth(), today.getDate())
       : null;
 
@@ -443,7 +439,7 @@ exports.getUserByPreference = async (req, res) => {
     `);
 
     // Gender filter
-    if (preferences.preferredGender) {
+    if (preferences?.preferredGender) {
       const gender = preferences.preferredGender.toLowerCase().replace(/'/g, "''");
       conditions.push(`LOWER(gender) = '${gender}'`);
     }
@@ -454,12 +450,25 @@ exports.getUserByPreference = async (req, res) => {
     }
 
     // Location filter using partial match
-    if (preferences.preferredLocation) {
+    if (preferences?.preferredLocation) {
       const location = preferences.preferredLocation.toLowerCase().replace(/'/g, "''");
       conditions.push(`LOWER(location) LIKE '%${location}%'`);
     }
 
-    // Assemble query
+    // ✅ Preferred Interests filter
+    if (preferences?.preferredInterests) {
+      const interestsArray = preferences.preferredInterests
+        .split(',')
+        .map(i => i.trim().toLowerCase().replace(/'/g, "''"))
+        .filter(i => i.length > 0);
+
+      if (interestsArray.length > 0) {
+        const interestConditions = interestsArray.map(i => `LOWER(interests) LIKE '%${i}%'`);
+        conditions.push(`(${interestConditions.join(' OR ')})`);
+      }
+    }
+
+    // Final SQL query
     const query = `
       SELECT * FROM user
       WHERE ${conditions.join(' AND ')}
