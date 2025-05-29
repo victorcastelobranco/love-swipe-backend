@@ -192,12 +192,24 @@ exports.updateProfile = async (req, res) => {
     const currentUser = await prisma.user.findUnique({ where: { id: userId } });
     if (!currentUser) return res.status(404).json({ error: "User not found" });
 
-    // ✅ Normalize pictures
-    let pictures = Array.isArray(updates.pictures)
-      ? updates.pictures.filter(p => typeof p === 'string' && p.trim() !== '')
-      : JSON.parse(currentUser.profilePictures || '[]');
+    // ✅ Normalize picture input
+    let pictures = [];
 
-    // ✅ Enforce picture limit
+    if (Array.isArray(updates.pictures)) {
+      pictures = updates.pictures.filter(p => typeof p === 'string' && p.trim() !== '');
+    } else if (typeof updates.pictures === 'string') {
+      try {
+        const parsed = JSON.parse(updates.pictures);
+        if (Array.isArray(parsed)) {
+          pictures = parsed.filter(p => typeof p === 'string' && p.trim() !== '');
+        }
+      } catch (err) {
+        console.warn('⚠️ Invalid pictures JSON string:', updates.pictures);
+        pictures = [];
+      }
+    }
+
+    // ✅ Enforce picture limits
     const maxAllowed = currentUser.isPremium ? 5 : 1;
     if (pictures.length > maxAllowed) {
       return res.status(400).json({ error: `You can upload up to ${maxAllowed} picture${maxAllowed > 1 ? 's' : ''}.` });
@@ -208,7 +220,10 @@ exports.updateProfile = async (req, res) => {
     if (Array.isArray(updates.interests)) {
       cleanedInterests = updates.interests.map(tag => tag.trim()).filter(Boolean);
     } else if (typeof updates.interests === 'string') {
-      cleanedInterests = updates.interests.split(',').map(tag => tag.trim()).filter(Boolean);
+      cleanedInterests = updates.interests
+        .split(',')
+        .map(tag => tag.trim())
+        .filter(Boolean);
     }
 
     const dataToUpdate = {
@@ -217,7 +232,7 @@ exports.updateProfile = async (req, res) => {
       profilePictures: JSON.stringify(pictures),
       gender: updates.gender || currentUser.gender,
       bio: updates.bio?.trim() || currentUser.bio,
-      interests: cleanedInterests.length > 0 ? cleanedInterests : null, // ✅ send as array or null
+      interests: cleanedInterests?.length > 0 ? cleanedInterests : null,
       location: updates.location?.trim() || currentUser.location,
       birth: updates.birth ? new Date(updates.birth) : currentUser.birth
     };
