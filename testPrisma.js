@@ -14,5 +14,5 @@ async function main() {
   }
 }
 
-// ✅ Actually run it
+// actually run it
 main();
