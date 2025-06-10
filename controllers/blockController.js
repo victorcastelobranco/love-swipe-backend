@@ -1,6 +1,8 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
+
+//function to block an user
 exports.blockUser = async (req, res) => {
   const blockerId = req.user.id;
   const { blockedId } = req.body;
@@ -24,7 +26,7 @@ exports.blockUser = async (req, res) => {
   }
 };
 
-// Get all users blocked by current user
+//get all users blocked by current user
 exports.getBlockedUsers = async (req, res) => {
   try {
     const blocked = await prisma.block.findMany({
@@ -47,6 +49,8 @@ exports.getBlockedUsers = async (req, res) => {
   }
 };
 
+
+//unblock the user from the the logged in user
 exports.unblockUser = async (req, res) => {
   const blockerId = req.user.id;
   const { blockedId } = req.body;

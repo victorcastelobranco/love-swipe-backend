@@ -3,7 +3,7 @@ const router = express.Router();
 const adminController = require('../controllers/adminController');
 const auth = require('../middleware/auth'); // ❌ Do not call it here
 
-// Correct usage inside the route:
+//routes for admin
 router.get('/dashboard', auth(), adminController.dashboard);
 router.get('/users', auth(), adminController.listUsers);
 router.delete('/users/:id', auth(), adminController.deleteUser);

@@ -2,7 +2,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 
-// ➡️ Send a message
+// send a message
 exports.sendMessage = async (req, res) => {
   const receiverId = parseInt(req.params.receiverId);
   const { content } = req.body;
@@ -16,6 +16,7 @@ exports.sendMessage = async (req, res) => {
     return res.status(400).json({ error: "Missing receiverId or content" });
   }
 
+  //ignore if one of the users is blocked
   try {
     const blocked = await prisma.block.findFirst({
       where: {
@@ -31,6 +32,7 @@ exports.sendMessage = async (req, res) => {
       return res.status(403).json({ error: 'Messaging is blocked between these users.' });
     }
 
+    //check if they are mutual liking each other
     const match = await prisma.matches.findFirst({
       where: {
         isMutual: true,
@@ -62,13 +64,13 @@ exports.sendMessage = async (req, res) => {
   }
 };
 
-// ➡️ Get conversation between two users
+// get conversation between two users
 exports.getMessages = async (req, res) => {
   const { userId } = req.params; // person you're chatting with
   const currentUserId = req.user.id;
 
   try {
-    // Block check: current user blocked the other or was blocked by them
+    // block check: current user blocked the other or was blocked by them
     const blocked = await prisma.block.findFirst({
       where: {
         OR: [

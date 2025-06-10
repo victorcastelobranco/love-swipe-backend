@@ -5,6 +5,8 @@ const { v4: uuidv4 } = require('uuid');
 const nodemailer = require('nodemailer'); // custom here, not using utils/sendEmail
 const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
 
+
+//sending email to email if the user forgot their password, and it is a real email
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -68,6 +70,8 @@ exports.requestPasswordReset = async (req, res) => {
   }
 };
 
+
+//after authorization with token, user can use a new password
 exports.resetPassword = async (req, res) => {
   try {
     console.log('🧪 Reset password hit');

@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
 
+
+//using JWT to keep session and prevent user to go to other pages
 module.exports = function () {
   return function (req, res, next) {
     const authHeader = req.headers.authorization;

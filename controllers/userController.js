@@ -10,7 +10,7 @@ const isValidEmail = (email) => {
 };
 const nodemailer = require('nodemailer');
 
-// SIGNUP
+//create a new account 
 exports.signup = async (req, res) => {
   try {
     const { email, username, password, birth, gender, profilePicture } = req.body;
@@ -94,7 +94,7 @@ exports.signup = async (req, res) => {
   }
 };
 
-// LOGIN
+//logging in
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -149,7 +149,7 @@ exports.login = async (req, res) => {
   }
 };
 
-// GET LOGGED-IN USER
+//get me in profile to see the user info
 exports.getMe = async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
@@ -183,7 +183,7 @@ exports.getMe = async (req, res) => {
   }
 };
 
-// UPDATE PROFILE
+//update the user profile 
 exports.updateProfile = async (req, res) => {
   const userId = req.user.id;
   const updates = req.body;
@@ -249,7 +249,7 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-// GET RANDOM USER
+//get users when swiping, always generating a random one
 exports.getRandomUser = async (req, res) => {
   const currentUserId = req.user.id;
 
@@ -294,7 +294,7 @@ exports.getRandomUser = async (req, res) => {
   }
 };
 
-// GET PUBLIC PROFILE BY ID
+//getting users's profile to see them 
 exports.getUserById = async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
@@ -341,7 +341,7 @@ exports.getUserById = async (req, res) => {
   }
 };
 
-// CHANGE PASSWORD
+//change password in edit profile, no verification needed
 exports.changePassword = async (req, res) => {
   const userId = req.user.id;
   const { oldPassword, newPassword } = req.body;
@@ -371,6 +371,7 @@ exports.changePassword = async (req, res) => {
   }
 };
 
+//setting up user's filter to swipe with other users
 exports.updatePreferences = async (req, res) => {
   const userId = req.user.id;
   let { preferredGender, minAge, maxAge, preferredLocation, preferredInterests } = req.body;
@@ -408,6 +409,7 @@ exports.updatePreferences = async (req, res) => {
   }
 };
 
+//fetching users that match their preferences setup
 exports.getUserByPreference = async (req, res) => {
   const currentUserId = req.user.id;
 

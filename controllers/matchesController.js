@@ -1,7 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-// POST /api/matches → Like another user
+//posting into db a like of a user
 exports.matchUser = async (req, res) => {
   const currentUserId = req.user.id;
   const { likedUserId } = req.body;
@@ -13,7 +13,7 @@ exports.matchUser = async (req, res) => {
   }
 
   try {
-    // ✅ Fetch current user's premium status
+    // fetch current user's premium status if they ahve it
     const currentUser = await prisma.user.findUnique({
       where: { id: currentUserId },
       select: { isPremium: true }
@@ -33,7 +33,7 @@ exports.matchUser = async (req, res) => {
 
     console.log('Swipe count:', swipeCount);
 
-    // ✅ Only enforce limit if not premium
+    // only use limit if not premium
     if (!currentUser.isPremium && swipeCount >= 10) {
       return res.status(403).json({ error: 'Swipe limit reached for today.' });
     }
@@ -79,6 +79,7 @@ exports.matchUser = async (req, res) => {
   }
 };
 
+//skipping the user, they never appear anymore and also counts for the limit
 exports.skipUser = async (req, res) => {
   const currentUserId = req.user.id;
   const skippedUserId = parseInt(req.params.skippedUserId, 10);
@@ -123,8 +124,7 @@ exports.skipUser = async (req, res) => {
 };
 
 
-// GET /api/matches → Fetch mutual matches
-// GET /api/matches → Fetch mutual matches
+//fetch mutual likes, matches
 exports.getMatches = async (req, res) => {
   const currentUserId = req.user.id;
 

@@ -38,7 +38,6 @@ app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/matches', matchesRouter);
 app.use('/api/messages', messagesRouter);
-console.log('DEBUG: adminRouter =', adminRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/auth', require('./routes/oauth'));
 app.use('/api', verifyRoutes);

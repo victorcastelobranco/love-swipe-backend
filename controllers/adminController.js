@@ -2,7 +2,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const bcrypt = require('bcryptjs');
 
-// Admin registration
+//admin registration, not being used
 exports.register = async (req, res) => {
   const { email, password } = req.body;
 
@@ -28,7 +28,7 @@ exports.register = async (req, res) => {
 };
 
 
-// Admin Dashboard: Get statistics
+//dashboard of admin, here are a list of queries with statistics 
 exports.dashboard = async (req, res) => {
   try {
     const users = await prisma.user.findMany();
@@ -61,7 +61,7 @@ exports.dashboard = async (req, res) => {
   }
 };
 
-// Admin: List all users
+//sql query to list all users
 exports.listUsers = async (req, res) => {
   try {
     const users = await prisma.user.findMany({
@@ -83,7 +83,7 @@ exports.listUsers = async (req, res) => {
   }
 };
 
-// Admin: Delete a user by ID
+//sql query to delete an user from the database
 exports.deleteUser = async (req, res) => {
   const { id } = req.params;
 

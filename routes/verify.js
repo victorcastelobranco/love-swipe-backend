@@ -3,6 +3,8 @@ const router = express.Router();
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
+
+//route to verify email
 router.get('/verify-email', async (req, res) => {
   const { token } = req.query;
 

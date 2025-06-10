@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-// 🔐 Helper to generate JWT
+// helper to generate JWT
 function generateJWT(user) {
   return jwt.sign(
     { id: user.id, email: user.email, role: 'user' },

@@ -7,6 +7,7 @@ const {
   unblockUser
 } = require('../controllers/blockController');
 
+//blocking routes
 router.post('/', auth(), blockUser);
 router.get('/', auth(), getBlockedUsers);
 router.delete('/', auth(), unblockUser);

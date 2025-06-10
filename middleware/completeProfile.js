@@ -1,6 +1,8 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
+
+//middleware used when user is coming from google oauth, since its its not enough info 
 module.exports = async function (req, res, next) {
   try {
     const userId = req.user.id;
